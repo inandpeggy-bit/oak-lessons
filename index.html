@@ -1,0 +1,171 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>橡木互動教材庫</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Lexend:wght@400;600&display=swap">
+<style>
+/* Layout: 品牌列 → 搜尋與分類 → 依分類分組的卡片格；擁有者可切換「管理」模式新增、編輯、刪除 */
+:root{
+  --bg:#f6f1e7;--surface:#fffdf8;--ink:#2c2118;--muted:#7a6a5a;--line:#e3d7c3;
+  --oak:#7a4e2b;--oak-soft:#efe2cf;--leaf:#3f6b45;--leaf-soft:#e2eddf;--acorn:#d08a2c;--acorn-soft:#fbecd2;--bad:#b4442f;--bad-soft:#f8e0da;
+  --f-zh:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;--f-en:"Lexend","Noto Sans TC",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1712;--surface:#27201a;--ink:#f3ebdf;--muted:#b5a592;--line:#3d3228;--oak:#d7a774;--oak-soft:#3a2d22;--leaf:#8cc394;--leaf-soft:#22332a;--acorn:#f0b45a;--acorn-soft:#3b2e1a;--bad:#f08a76;--bad-soft:#3d2420;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1c1712;--surface:#27201a;--ink:#f3ebdf;--muted:#b5a592;--line:#3d3228;--oak:#d7a774;--oak-soft:#3a2d22;--leaf:#8cc394;--leaf-soft:#22332a;--acorn:#f0b45a;--acorn-soft:#3b2e1a;--bad:#f08a76;--bad-soft:#3d2420;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-zh);font-size:16px;line-height:1.6}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 56px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.brand b{display:block;font-size:20px;font-weight:900;color:var(--oak);line-height:1.2}
+.brand small{display:block;font-family:var(--f-en);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:clamp(26px,4vw,38px);font-weight:900;margin:22px 0 4px;text-wrap:balance}
+.sub{color:var(--muted);margin:0 0 18px}
+button,input,select,textarea{font:inherit;color:var(--ink)}
+button{cursor:pointer;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);padding:7px 14px}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--acorn);outline-offset:2px}
+.main{background:var(--oak);border-color:var(--oak);color:var(--surface);font-weight:700}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:22px}
+.bar input[type=search]{flex:1 1 220px;min-width:0;padding:9px 14px;border:1.5px solid var(--line);border-radius:999px;background:var(--surface)}
+.chip{border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px}
+.chip[aria-pressed=true]{background:var(--oak);border-color:var(--oak);color:var(--surface)}
+section{margin-bottom:28px}
+h2{font-size:18px;font-weight:900;color:var(--leaf);margin:0 0 10px;display:flex;align-items:baseline;gap:8px}
+h2 span{font-family:var(--f-en);font-size:13px;color:var(--muted);font-weight:400}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{position:relative;display:flex;flex-direction:column;gap:4px;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.card a{color:var(--ink);text-decoration:none;font-weight:700;font-size:17px;line-height:1.35}
+.card a::after{content:"";position:absolute;inset:0;border-radius:14px}
+.card:hover{border-color:var(--oak)}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card .go{font-family:var(--f-en);font-size:12px;color:var(--acorn);font-weight:600;margin-top:auto;padding-top:6px}
+.tools{position:relative;z-index:1;display:flex;gap:6px;margin-top:8px}
+.tools button{font-size:13px;padding:3px 10px}
+.danger{color:var(--bad);border-color:var(--bad)}
+.panel{background:var(--surface);border:2px solid var(--oak);border-radius:16px;padding:18px;margin-bottom:24px}
+.panel h3{margin:0 0 12px;font-size:17px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.form{grid-template-columns:1fr}}
+.form label{display:grid;gap:4px;font-size:13px;font-weight:700;color:var(--muted);min-width:0}
+.form input,.form select,.form textarea{border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg);min-width:0;width:100%}
+.form .full{grid-column:1/-1}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.msg{font-size:14px;font-weight:700}
+.msg.err{color:var(--bad)}.msg.ok{color:var(--leaf)}
+.empty{color:var(--muted);text-align:center;padding:40px 0}
+.note{font-size:13px;color:var(--muted);border-top:1px dashed var(--line);padding-top:14px;margin-top:10px}
+</style>
+<div id="app"></div>
+<script id="hub-data" type="application/json">{"items":[
+{"t": "被動式文法記憶卡", "u": "https://claude.ai/artifact/TBiGvP2zhKrN6bAoJBkmsp", "c": "英文文法", "d": "9 張兩面卡、L1–L4 關卡、老師驗收與進度表"},
+{"t": "過去進行式文法記憶卡", "u": "https://claude.ai/artifact/3WqXp5oj7Ce7RiaLJ64Mvm", "c": "英文文法", "d": "9 張兩面卡、L1–L4 關卡、課本 20 題選擇＋10 題改寫"},
+{"t": "Build Bridges 閱讀跟讀", "u": "build-bridges/", "c": "英文閱讀", "d": "B1 重點單字、狄克生片語對照、堆疊練習、語音辨識跟讀與 PNG 學習報告"},
+{"t": "Build Bridges 學生講義", "u": "handouts/Build-Bridges-handout.pdf", "c": "英文閱讀", "d": "B1 以上單字、重點片語（附狄克生片語）、重要片語；PDF，可列印"},
+{"t": "Go Overboard 閱讀跟讀", "u": "go-overboard/", "c": "英文閱讀", "d": "船的慣用語：B1 重點單字、狄克生片語對照、堆疊練習、語音辨識跟讀與 PNG 學習報告"},
+{"t": "Go Overboard 學生講義", "u": "handouts/Go-Overboard-handout.pdf", "c": "英文閱讀", "d": "B1 以上單字、重點片語（附狄克生片語）、重要片語；PDF，可列印"},
+{"t": "Gold Mine 閱讀跟讀", "u": "gold-mine/", "c": "英文閱讀", "d": "採礦的慣用語：B1 重點單字、狄克生片語對照、堆疊練習、語音辨識跟讀與 PNG 學習報告"},
+{"t": "Gold Mine 學生講義", "u": "handouts/Gold-Mine-handout.pdf", "c": "英文閱讀", "d": "B1 以上單字、重點片語（附狄克生片語）、重要片語；PDF，可列印"},
+{"t": "Learn to Fly 閱讀跟讀", "u": "learn-to-fly/", "c": "英文閱讀", "d": "飛行的慣用語：B1 重點單字、字面陷阱、堆疊練習、語音辨識跟讀與 PNG 學習報告"},
+{"t": "Learn to Fly 學生講義", "u": "handouts/Learn-to-Fly-handout.pdf", "c": "英文閱讀", "d": "重點片語、字面陷阱、B1 以上單字、重要片語；PDF，可列印"},
+{"t": "動詞三態口訣機", "u": "https://claude.ai/artifact/Np7JhzzQe5QUnksbqv7FEr", "c": "英文文法", "d": ""},
+{"t": "單字攻頂 GEPT 初級", "u": "https://claude.ai/artifact/VMthdEPJoAvYjVRx2wdeBr", "c": "單字與檢定", "d": ""},
+{"t": "GEPT 2.0 上線週", "u": "https://claude.ai/artifact/Sqps4kpuQiZ11fHbyJKrbA", "c": "單字與檢定", "d": ""},
+{"t": "拍照學單字", "u": "https://claude.ai/artifact/HeZijYA4RX33zgdCmESNtM", "c": "單字與檢定", "d": ""},
+{"t": "英文打字測驗", "u": "https://claude.ai/artifact/8QUn6NBWmRwGThEtUnGi2M", "c": "單字與檢定", "d": ""},
+{"t": "My Week! 3.0", "u": "https://claude.ai/artifact/YUchDAGNHirXotAX1dRZcG", "c": "課堂遊戲", "d": "國小一二年級星期教學遊戲，投影/觸控螢幕用"},
+{"t": "Week Quest 星期闖關", "u": "https://claude.ai/artifact/EyDM1Rq2rjmMwpSuG5khGG", "c": "課堂遊戲", "d": ""},
+{"t": "Turtle or Book Bag", "u": "https://claude.ai/artifact/7BzKbzitLzS6Z4jWD56WY5", "c": "課堂遊戲", "d": ""},
+{"t": "橡木數學補強站", "u": "https://claude.ai/artifact/B1WH24G4DCb4DvgZz38YSZ", "c": "數學補強", "d": "五上第三、四、五單元補強入口"},
+{"t": "木棒與原子筆解題站", "u": "https://claude.ai/artifact/DJt25GHhe6ENvWwpK4Macz", "c": "數學補強", "d": ""},
+{"t": "乘法偵探特訓", "u": "https://claude.ai/artifact/9uw9SsJmuCnKyjJ9thPMGC", "c": "數學補強", "d": ""},
+{"t": "Airport English Lesson 1", "u": "https://claude.ai/artifact/BqW4usF9Ud4Mdp8Rkhkkto", "c": "MyTalk 線上課", "d": "旅遊英文機場篇，成人外師線上課"},
+{"t": "Teacher Guide：Airport English Lesson 1", "u": "https://claude.ai/artifact/3giLWV3PyAoMHKvDD51VLq", "c": "MyTalk 線上課", "d": "外師教學指引"},
+{"t": "MyTalk 線上上課前準備", "u": "https://claude.ai/artifact/DHD9X2pmkm3FU32dkGiCmv", "c": "MyTalk 線上課", "d": ""},
+{"t": "國小美語", "u": "https://claude.ai/artifact/4w5JZnFhXi2SZxnUChDQef", "c": "招生網頁", "d": "團體班＋外師線上一對一"},
+{"t": "2027 小一正音班", "u": "https://claude.ai/artifact/WgWoiDEvGjRWHDWedjd76g", "c": "招生網頁", "d": ""}
+], "cats": ["英文文法", "英文閱讀", "單字與檢定", "課堂遊戲", "數學補強", "MyTalk 線上課", "招生網頁"]}</script>
+<script id="hub-main">
+(function(){
+const PARTS={style:document.querySelector("style").outerHTML,title:document.querySelector("title").outerHTML,
+  meta:'<meta name="claude:viewport-fit-sides" content="cover">',
+  font:document.querySelector('link[rel=stylesheet]').outerHTML,main:document.getElementById("hub-main").outerHTML};
+let S=JSON.parse(document.getElementById("hub-data").textContent);
+let q="",cat="全部",editing=false,canEdit=false,art=null,editIdx=-1,msg="",msgCls="",busy=false,armDel=-1;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const app=document.getElementById("app");
+
+function docHTML(state){
+  const json=JSON.stringify(state).replace(/</g,"\\u003c");
+  return '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>'+
+  ':root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}'+
+  '</style></head><body>'+PARTS.title+"\n"+PARTS.meta+"\n"+PARTS.font+"\n"+PARTS.style+'\n<div id="app"></div>\n<script id="hub-data" type="application/json">'+json+'<\/script>\n'+PARTS.main+'</body></html>';
+}
+async function save(next,okText){
+  if(!art){msg="這個檢視無法儲存，請在 claude.ai 開啟這個頁面。";msgCls="err";render();return false}
+  busy=true;render();
+  try{await art.publish(docHTML(next));S=next;msg=okText;msgCls="ok";return true}
+  catch(e){msg=(e&&e.code==="conflict")?"別的視窗剛好也在儲存，頁面會重新載入，請再操作一次。":"儲存失敗："+((e&&e.message)||"請稍後再試");msgCls="err";return false}
+  finally{busy=false;render()}
+}
+function logo(){return '<svg width="38" height="42" viewBox="0 0 40 44" aria-hidden="true"><path d="M8 16c0-6 5-10 12-10s12 4 12 10H8z" fill="var(--oak)"/><path d="M20 6V1" stroke="var(--oak)" stroke-width="3" stroke-linecap="round"/><path d="M10 17h20c0 12-4 22-10 25C14 39 10 29 10 17z" fill="var(--acorn)"/><path d="M8 16h24" stroke="var(--oak)" stroke-width="3"/></svg>'}
+
+function formHTML(){const it=editIdx>=0?S.items[editIdx]:{t:"",u:"",c:S.cats[0]||"",d:""};
+  return `<div class="panel"><h3>${editIdx>=0?"編輯頁面":"新增一個互動網頁"}</h3>
+  <form id="f" class="form">
+   <label>頁面名稱<input id="ft" required value="${esc(it.t)}" placeholder="例：動詞三態口訣機"></label>
+   <label>網址<input id="fu" required value="${esc(it.u)}" placeholder="https://claude.ai/artifact/…"></label>
+   <label>分類<select id="fc">${S.cats.map(c=>`<option ${c===it.c?"selected":""}>${esc(c)}</option>`).join("")}<option value="__new">＋ 新分類…</option></select></label>
+   <label id="fnl" hidden>新分類名稱<input id="fn" placeholder="例：自然發音"></label>
+   <label class="full">一句話說明（可留空）<input id="fd" value="${esc(it.d)}" placeholder="給誰用、怎麼用"></label>
+  </form>
+  <div class="row"><button class="main" id="fs" ${busy?"disabled":""}>${busy?"儲存中…":editIdx>=0?"儲存修改":"加入教材庫"}</button>${editIdx>=0?'<button id="fx">取消編輯</button>':""}
+  <span class="msg ${msgCls}">${esc(msg)}</span></div></div>`}
+
+function render(){
+  const cats=S.cats.filter(c=>S.items.some(i=>i.c===c));
+  const match=i=>(cat==="全部"||i.c===cat)&&(!q||(i.t+i.d+i.c).toLowerCase().includes(q.toLowerCase()));
+  const groups=cats.map(c=>[c,S.items.map((it,ix)=>[it,ix]).filter(([it])=>it.c===c&&match(it))]).filter(g=>g[1].length);
+  app.innerHTML=`<div class="wrap">
+   <header><div class="brand">${logo()}<div><b>橡木美語</b><small>Oak English</small></div></div>
+   ${canEdit?`<button id="tog" class="${editing?"main":""}">${editing?"完成管理":"管理頁面"}</button>`:""}</header>
+   <h1>橡木互動教材庫</h1><p class="sub">課堂互動網頁、練習遊戲與招生頁，都從這裡打開。共 ${S.items.length} 個頁面。</p>
+   ${editing?formHTML():""}
+   <div class="bar"><input type="search" id="q" placeholder="搜尋頁面名稱…" value="${esc(q)}" aria-label="搜尋">
+    <div style="display:flex;gap:6px;flex-wrap:wrap">${["全部"].concat(cats).map(c=>`<button class="chip" aria-pressed="${c===cat}" data-c="${esc(c)}">${esc(c)}</button>`).join("")}</div></div>
+   ${groups.length?groups.map(([c,list])=>`<section><h2>${esc(c)}<span>${list.length}</span></h2><div class="grid">${list.map(([it,ix])=>`
+     <div class="card"><a href="${esc(it.u)}" target="_blank" rel="noopener">${esc(it.t)}</a>${it.d?`<p>${esc(it.d)}</p>`:""}<span class="go">開啟 →</span>
+     ${editing?`<div class="tools"><button data-up="${ix}" aria-label="往前移">↑</button><button data-ed="${ix}">編輯</button><button class="danger" data-del="${ix}">${armDel===ix?"確定刪除？":"刪除"}</button></div>`:""}</div>`).join("")}</div></section>`).join("")
+    :`<div class="empty">${S.items.length?"找不到符合的頁面":"還沒有頁面。按「管理頁面」新增第一個互動網頁。"}</div>`}
+   <p class="note">英文閱讀的頁面與講義都在本網站上；其他頁面會開啟 Claude 上的版本。</p></div>`;
+  bind();
+}
+function bind(){
+  const $=s=>app.querySelector(s);
+  const qi=$("#q");qi.oninput=e=>{q=e.target.value;const pos=qi.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(pos,pos)};
+  app.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{cat=b.dataset.c;render()});
+  if($("#tog"))$("#tog").onclick=()=>{editing=!editing;editIdx=-1;msg="";armDel=-1;render()};
+  if(!editing)return;
+  const fc=$("#fc");fc.onchange=()=>{$("#fnl").hidden=fc.value!=="__new"};
+  if($("#fx"))$("#fx").onclick=()=>{editIdx=-1;msg="";render()};
+  $("#fs").onclick=async()=>{
+    const t=$("#ft").value.trim(),u=$("#fu").value.trim(),d=$("#fd").value.trim();let c=fc.value;
+    if(c==="__new"){c=$("#fn").value.trim();if(!c){msg="請輸入新分類名稱";msgCls="err";render();return}}
+    if(!t||!/^https?:\/\//.test(u)){msg="請填頁面名稱，網址要以 https:// 開頭";msgCls="err";render();return}
+    const next=JSON.parse(JSON.stringify(S));if(!next.cats.includes(c))next.cats.push(c);
+    const item={t,u,c,d};if(editIdx>=0)next.items[editIdx]=item;else next.items.unshift(item);
+    const wasEdit=editIdx>=0;editIdx=-1;await save(next,wasEdit?"已儲存修改":"已加入「"+t+"」")};
+  app.querySelectorAll("[data-ed]").forEach(b=>b.onclick=()=>{editIdx=+b.dataset.ed;msg="";render();window.scrollTo({top:0,behavior:"smooth"})});
+  app.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{const ix=+b.dataset.del;
+    if(armDel!==ix){armDel=ix;render();return}
+    armDel=-1;const next=JSON.parse(JSON.stringify(S));const name=next.items[ix].t;next.items.splice(ix,1);await save(next,"已刪除「"+name+"」")});
+  app.querySelectorAll("[data-up]").forEach(b=>b.onclick=async()=>{const ix=+b.dataset.up;const next=JSON.parse(JSON.stringify(S));
+    const same=next.items.map((it,i)=>i).filter(i=>next.items[i].c===next.items[ix].c);const p=same.indexOf(ix);if(p<=0)return;
+    const j=same[p-1];[next.items[ix],next.items[j]]=[next.items[j],next.items[ix]];await save(next,"已調整順序")});
+}
+render();
+if(window.claude&&window.claude.use){
+  window.claude.use("user").then(async u=>{if(u&&await u.canEdit()){canEdit=true;render()}}).catch(()=>{});
+  window.claude.use("artifact").then(a=>{art=a}).catch(()=>{});
+}
+})();
+</script>
+
+</body></html>

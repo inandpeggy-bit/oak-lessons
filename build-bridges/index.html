@@ -1,0 +1,1403 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Build Bridges 閱讀跟讀</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&family=Zilla+Slab:wght@600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* Layout: birch-paper reading desk — article column + lookup panel (sheet on phones); pine = action, honey = key idioms */
+:root{
+  --bg:#F1F4EC; --surface:#FFFFFF; --surface-2:#E6ECE0; --ink:#1D2A22; --muted:#5A6A60;
+  --pine:#24553F; --pine-ink:#FFFFFF; --oak:#8A5A33; --honey:#E9B23C; --honey-soft:#FBE8B5;
+  --line:#D3DBCC; --good:#2B8752; --bad:#C0443B; --warn:#B9801A; --shadow:0 10px 30px rgba(30,50,35,.12);
+  --f-read:"Lexend","Noto Sans TC",system-ui,sans-serif;
+  --f-ui:"Noto Sans TC","Lexend",system-ui,sans-serif;
+  --f-display:"Zilla Slab",Georgia,"Noto Sans TC",serif;
+  --read-size:20px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111813; --surface:#18221C; --surface-2:#223029; --ink:#E4EBE5; --muted:#99A89E;
+  --pine:#6CBF92; --pine-ink:#0D1A12; --oak:#D4A271; --honey:#E7B647; --honey-soft:#4A3C16;
+  --line:#2E3C34; --good:#5CC48A; --bad:#EA766B; --warn:#E3AB45; --shadow:0 10px 30px rgba(0,0,0,.45); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111813; --surface:#18221C; --surface-2:#223029; --ink:#E4EBE5; --muted:#99A89E;
+  --pine:#6CBF92; --pine-ink:#0D1A12; --oak:#D4A271; --honey:#E7B647; --honey-soft:#4A3C16;
+  --line:#2E3C34; --good:#5CC48A; --bad:#EA766B; --warn:#E3AB45; --shadow:0 10px 30px rgba(0,0,0,.45); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.6}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--honey);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* header */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;padding-block:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand svg{width:38px;height:38px;flex:none}
+.brand b{font-family:var(--f-display);font-size:20px;line-height:1.1;display:block;color:var(--pine)}
+.brand small{display:block;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-family:var(--f-read)}
+.top .spacer{flex:1}
+.tools{display:flex;gap:6px;align-items:center}
+.ibtn{border:1px solid var(--line);background:var(--surface);border-radius:10px;min-width:40px;height:38px;padding:0 10px;font-weight:600}
+.ibtn:hover{background:var(--surface-2)}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;padding-block:0 0;scrollbar-width:none}
+nav.tabs button{border:0;background:none;padding:10px 14px;border-bottom:3px solid transparent;font-weight:600;color:var(--muted);white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--pine);border-color:var(--pine)}
+.tabrow{border-top:1px solid var(--line)}
+
+/* unit heading */
+.unit{padding-block:22px 6px}
+.eyebrow{font-family:var(--f-read);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--oak);font-weight:600}
+.unit h1{font-family:var(--f-display);font-size:clamp(26px,4vw,40px);line-height:1.15;margin:4px 0 4px;text-wrap:balance}
+.unit p{margin:0;color:var(--muted)}
+
+/* listen view */
+.listen{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:24px;align-items:start;padding-block:12px 40px}
+@media (max-width:999px){.listen{grid-template-columns:minmax(0,1fr)}}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:14px}
+.btn{border:0;border-radius:12px;padding:10px 16px;font-weight:700;background:var(--pine);color:var(--pine-ink);display:inline-flex;align-items:center;gap:8px;min-height:44px}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:var(--surface-2);color:var(--ink)}
+.btn.honey{background:var(--honey);color:#2A1E05}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.seg button{border:0;background:var(--surface);padding:8px 12px;font-weight:600;min-height:42px;font-family:var(--f-read)}
+.seg button[aria-pressed="true"]{background:var(--pine);color:var(--pine-ink)}
+.switch{display:inline-flex;align-items:center;gap:8px;padding:0 6px;font-weight:600;color:var(--muted)}
+.switch input{width:18px;height:18px;accent-color:var(--pine)}
+select{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px;max-width:220px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin:0 0 10px}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.sw{width:26px;height:12px;border-radius:3px;display:inline-block}
+.sw.m{background:var(--honey-soft);border-bottom:3px solid var(--honey)}
+.sw.s{border-bottom:2px dotted var(--oak)}
+
+article.reading{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,3vw,36px);font-family:var(--f-read);font-size:var(--read-size);line-height:1.95}
+.reading h2{font-family:var(--f-display);font-size:1.25em;margin:0 0 .6em;line-height:1.3}
+.reading p{margin:0 0 1em;max-width:62ch}
+.sent{border-radius:8px;transition:background .2s}
+.sent.speaking{background:color-mix(in srgb,var(--pine) 12%,transparent)}
+.sp{border:0;width:1.45em;height:1.45em;border-radius:50%;background:var(--surface-2);color:var(--pine);font-size:.62em;vertical-align:.25em;margin-right:.3em;padding:0;line-height:1}
+.sp:hover{background:var(--pine);color:var(--pine-ink)}
+.w{cursor:pointer;border-radius:4px;padding:0 1px}
+.w:hover{background:var(--surface-2)}
+.w.sub{border-bottom:2px dotted var(--oak)}
+.w.main,.gap.main{background:var(--honey-soft);box-shadow:inset 0 -3px 0 var(--honey)}
+.w.kw{font-weight:600;color:var(--oak);text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.w.kw.main{color:inherit}
+.sw.k{border-bottom:3px solid var(--oak);height:10px}
+.w.sel{outline:2px solid var(--pine);outline-offset:1px}
+.w.reading-now{background:var(--pine);color:var(--pine-ink);box-shadow:none}
+.zh{display:none;font-family:var(--f-ui);font-size:.78em;color:var(--muted);line-height:1.6}
+.show-zh .sent{display:block;margin-bottom:.5em}
+.show-zh .zh{display:block;margin:-.1em 0 .4em 1.8em}
+
+/* lookup panel */
+.panel{position:sticky;top:120px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;max-height:calc(100vh - 140px);overflow:auto}
+.panel h3{font-family:var(--f-display);margin:0 0 6px;font-size:20px}
+.hint{color:var(--muted);margin:0 0 12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-family:var(--f-read);font-weight:500;font-size:14px}
+.chip.main{background:var(--honey-soft);border-color:var(--honey)}
+.chip:hover{border-color:var(--pine)}
+.closebtn{display:none}
+.backdrop{display:none}
+@media (max-width:999px){
+  .panel{position:static;max-height:none}
+  .panel.active{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:50;max-height:78vh;border-radius:20px 20px 0 0;box-shadow:var(--shadow);
+    padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+  .panel.active .closebtn{display:inline-flex}
+  .backdrop.on{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:40}
+}
+.card{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}
+.card:first-of-type{border-top:0;margin-top:0;padding-top:0}
+.whead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.whead .word{font-family:var(--f-read);font-size:30px;font-weight:600}
+.ipa{font-family:"Lexend",sans-serif;color:var(--muted)}
+.pos{display:inline-block;font-size:12px;font-weight:700;background:var(--surface-2);border-radius:6px;padding:2px 8px;color:var(--oak)}
+.note{font-size:13px;color:var(--oak);font-weight:600}
+.zhm{font-size:19px;font-weight:700;margin:6px 0 2px}
+.enm{font-family:var(--f-read);color:var(--muted);margin:0 0 10px}
+.lbl{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin:12px 0 4px;text-transform:uppercase}
+.ex{background:var(--surface-2);border-radius:12px;padding:10px 12px}
+.ex .en{font-family:var(--f-read)}
+.ex .z{color:var(--muted);font-size:14px}
+.cols{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.cols li{display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}
+.cols b{font-family:var(--f-read);font-weight:500}
+.cols span{color:var(--muted);font-size:14px}
+.say{border:0;background:none;color:var(--pine);font-weight:700;padding:2px 6px;border-radius:8px}
+.say:hover{background:var(--surface-2)}
+.phcard{background:color-mix(in srgb,var(--honey-soft) 55%,var(--surface));border:1px solid var(--honey);border-radius:14px;padding:14px;margin-top:14px}
+.phcard.subc{background:var(--surface);border:1px dashed var(--oak)}
+.phcard h4{margin:0;font-family:var(--f-read);font-size:20px}
+.tag{font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px;background:var(--honey);color:#2A1E05;vertical-align:middle;margin-left:6px}
+.tag.s{background:var(--surface-2);color:var(--oak)}
+.origin{border-left:3px solid var(--oak);padding-left:10px;margin:8px 0;font-size:14px}
+.intext{font-family:var(--f-read);font-size:14px;color:var(--muted)}
+
+/* phrases view */
+.idioms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding-block:12px}
+@media (max-width:900px){.idioms{grid-template-columns:minmax(0,1fr)}}
+.idiom{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:6px}
+.idiom .num{font-family:var(--f-display);color:var(--oak);font-size:14px}
+.idiom h3{font-family:var(--f-read);font-size:24px;margin:0;line-height:1.25}
+.idiom .zhm{margin:0}
+.section-h{font-family:var(--f-display);font-size:24px;margin:28px 0 4px}
+.section-h small{font-family:var(--f-ui);font-size:14px;color:var(--muted);font-weight:500;margin-left:8px}
+.lvl{display:inline-block;font-family:var(--f-read);font-size:12px;font-weight:600;border-radius:6px;padding:1px 7px;background:var(--oak);color:#fff;vertical-align:middle}
+.lvl.b2{background:var(--pine);color:var(--pine-ink)}
+/* stacking ladders */
+.ladders{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,520px),1fr));gap:16px;padding-block:8px}
+.ladder{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 18px 14px}
+.ladder header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.ladder header b{font-family:var(--f-display);font-size:18px;color:var(--oak)}
+.rung{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:12px;margin-bottom:6px;background:var(--surface-2)}
+.rung[hidden]{display:none}
+.rung .ty{flex:none;font-size:12px;font-weight:700;border-radius:6px;padding:2px 8px;margin-top:4px;background:var(--surface);color:var(--muted);min-width:4.2em;text-align:center}
+.rung.l0 .ty{background:var(--oak);color:#fff}
+.rung.l1 .ty{background:var(--honey);color:#2A1E05}
+.rung.l2 .ty{background:var(--pine);color:var(--pine-ink)}
+.rung.l3 .ty{background:var(--ink);color:var(--bg)}
+.rung .tx{flex:1;min-width:0}
+.rung .en{font-family:var(--f-read);font-size:calc(var(--read-size) * .95);line-height:1.45}
+.rung .en mark{background:var(--honey-soft);color:inherit;border-radius:4px;padding:0 2px;box-shadow:inset 0 -2px 0 var(--honey)}
+.rung .z{color:var(--muted);font-size:14px}
+.rung.l1{margin-left:12px}.rung.l2{margin-left:24px}.rung.l3{margin-left:36px}
+@media (max-width:600px){.rung.l1{margin-left:6px}.rung.l2{margin-left:12px}.rung.l3{margin-left:18px}}
+.ladder .lctl{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.ladder .lctl .btn{min-height:40px;padding:8px 14px}
+/* key vocab */
+.kwgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:12px;padding-block:8px}
+.kwc{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;text-align:left;display:flex;flex-direction:column;gap:2px}
+.kwc:hover{border-color:var(--pine)}
+.kwc .top2{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.kwc .wd{font-family:var(--f-read);font-size:22px;font-weight:600}
+.kwc .zz{font-weight:700}
+.kwc .cc{font-family:var(--f-read);font-size:14px;color:var(--muted)}
+/* dixon */
+.dixon{border:1px dashed var(--pine);border-radius:12px;padding:10px 12px;margin-top:6px;background:color-mix(in srgb,var(--pine) 6%,var(--surface))}
+.dixon .dh{font-size:12px;font-weight:700;color:var(--pine);letter-spacing:.05em;margin-bottom:4px}
+.dixon .di{margin:6px 0 0}
+.dixon .di b{font-family:var(--f-read);font-weight:600}
+.dixon .rel{font-size:11px;font-weight:700;border-radius:6px;padding:1px 6px;margin-left:6px;background:var(--pine);color:var(--pine-ink)}
+.dixon .rel.sim{background:var(--surface-2);color:var(--pine)}
+.dixon .dex{font-family:var(--f-read);font-size:14px}
+.dixon .dz{color:var(--muted);font-size:13px}
+/* png */
+.pngwrap{margin-top:14px}
+.pngwrap img{display:block;width:100%;max-width:540px;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.quality td.q{font-weight:700;text-align:center}
+.quality td.q.g{color:var(--good)} .quality td.q.y{color:var(--warn)} .quality td.q.r{color:var(--bad)}
+.quality .miss{color:var(--bad);font-family:var(--f-read);font-size:14px}
+.quality .hintmk{font-size:11px;color:var(--muted);display:block;font-weight:500}
+
+/* shadow view */
+.modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding-block:12px}
+@media (max-width:760px){.modes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.mode{border:2px solid var(--line);background:var(--surface);border-radius:16px;padding:12px;text-align:left;display:flex;flex-direction:column;gap:2px}
+.mode[aria-pressed="true"]{border-color:var(--pine);box-shadow:0 0 0 3px color-mix(in srgb,var(--pine) 18%,transparent)}
+.mode .mstep{font-size:12px;color:var(--oak);font-weight:700}
+.mode .mname{font-weight:700;font-size:16px}
+.mode .mrate{font-family:var(--f-read);font-weight:600;color:var(--pine)}
+.mode .mstat{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.meter{height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden;margin-top:4px}
+.meter i{display:block;height:100%;background:var(--pine);border-radius:99px}
+.dots{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+.dot{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-weight:700;font-variant-numeric:tabular-nums;font-family:var(--f-read)}
+.dot.cur{outline:3px solid var(--pine);outline-offset:1px}
+.dot.g{background:color-mix(in srgb,var(--good) 22%,var(--surface));border-color:var(--good)}
+.dot.y{background:color-mix(in srgb,var(--warn) 22%,var(--surface));border-color:var(--warn)}
+.dot.r{background:color-mix(in srgb,var(--bad) 18%,var(--surface));border-color:var(--bad)}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:clamp(16px,3vw,32px);margin-bottom:40px}
+.stage .count{color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
+.target{font-family:var(--f-read);font-size:calc(var(--read-size) * 1.25);line-height:1.7;margin:12px 0;min-height:2.4em}
+.target .t{display:inline-block;margin-right:.28em}
+.target .t.ok{color:var(--good);font-weight:600}
+.target .t.miss{color:var(--bad);text-decoration:underline wavy;text-underline-offset:5px}
+.blank{display:inline-block;margin-right:.35em;color:var(--muted);letter-spacing:.05em}
+.blank i{font-style:normal}
+.szh{color:var(--muted);margin:-4px 0 10px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn.rec{background:var(--bad);color:#fff}
+.btn.rec.on{animation:pulse 1.2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--bad) 25%,transparent)}}
+@media (prefers-reduced-motion:reduce){.btn.rec.on{animation:none}}
+.timer{height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;margin:12px 0 0}
+.timer i{display:block;height:100%;width:0;background:var(--bad)}
+.heard{font-family:var(--f-read);color:var(--muted);min-height:1.6em;margin-top:8px}
+.result{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:14px;padding:14px;border-radius:14px;background:var(--surface-2)}
+.score{font-family:var(--f-display);font-size:48px;line-height:1;font-variant-numeric:tabular-nums}
+.score small{font-size:18px}
+.msg{font-weight:700}
+.dot{min-width:40px;width:auto;padding:0 8px}
+.modes{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:760px){.modes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.dot.part{background:var(--surface-2);border:1.5px dashed var(--pine)}
+.steps2{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;font-weight:700;font-size:14px}
+.steps2 span{border-radius:999px;padding:4px 12px;background:var(--surface-2);color:var(--muted)}
+.steps2 span.on{background:var(--pine);color:var(--pine-ink)}
+.steps2 span.done{color:var(--good)}
+.steps2 .arr{background:none;padding:0}
+.namegate{max-width:520px;margin:12px auto 40px;text-align:center}
+.namegate h2{font-family:var(--f-display);font-size:26px;margin:0 0 6px}
+.namegate input{width:100%;font-size:22px;padding:12px 16px;border:2px solid var(--line);border-radius:14px;background:var(--surface);text-align:center;margin:14px 0}
+.namegate input:focus{border-color:var(--pine);outline:none}
+.namebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:var(--muted);font-weight:600;margin-top:4px}
+.namebar b{color:var(--ink)}
+.linkbtn{border:0;background:none;color:var(--pine);font-weight:700;text-decoration:underline;padding:4px}
+.segtag{display:inline-block;font-size:12px;font-weight:700;color:var(--oak);background:var(--surface-2);border-radius:6px;padding:2px 8px;margin-left:6px}
+.notice{border:1px solid var(--warn);background:color-mix(in srgb,var(--warn) 10%,var(--surface));border-radius:12px;padding:10px 12px;font-size:14px;margin-top:12px}
+
+/* report */
+.report{padding-block:12px 40px;display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+.report>*{min-width:0}
+.rcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px}
+.rcard h3{font-family:var(--f-display);font-size:20px;margin:0 0 10px}
+.rhead{display:flex;flex-wrap:wrap;gap:14px;align-items:end}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:13px;color:var(--muted);font-weight:600}
+.field input{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);min-width:0;width:220px;max-width:100%}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:700px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tile{background:var(--surface-2);border-radius:14px;padding:14px}
+.tile b{display:block;font-family:var(--f-display);font-size:30px;font-variant-numeric:tabular-nums;line-height:1.1}
+.tile span{font-size:13px;color:var(--muted)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:460px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;vertical-align:middle}
+th{font-size:12px;color:var(--muted);letter-spacing:.06em}
+.hbar{height:10px;background:var(--surface-2);border-radius:99px;overflow:hidden;min-width:80px}
+.hbar i{display:block;height:100%;border-radius:99px}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:700}
+.pill.g{background:color-mix(in srgb,var(--good) 20%,transparent);color:var(--good)}
+.pill.y{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn)}
+.pill.n{background:var(--surface-2);color:var(--muted)}
+.weak li{margin-bottom:8px;font-family:var(--f-read)}
+.vocab{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+.vitem{border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.vitem b{font-family:var(--f-read);font-weight:600}
+.vitem span{color:var(--muted);font-size:13px}
+textarea{width:100%;min-height:80px;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--surface)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.confirm{display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;z-index:90;font-weight:600;max-width:calc(100% - 32px)}
+/* 字面陷阱 */
+.w.trap{border-bottom:2px dashed var(--bad)}
+.sw.t{border-bottom:2px dashed var(--bad);height:10px}
+.trapc{border:1.5px solid color-mix(in srgb,var(--bad) 45%,transparent);background:color-mix(in srgb,var(--bad) 6%,var(--surface));border-radius:14px;padding:14px;margin:0 0 14px;min-width:0}
+.trapc .tt{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:2px 8px;background:var(--bad);color:#fff;margin-right:6px}
+.trapc .ty{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:2px 8px;background:var(--surface-2);color:var(--oak)}
+.trapc .num{font-family:var(--f-display);color:var(--oak);font-size:14px;margin-right:6px}
+.trapc h4{font-family:var(--f-read);font-size:21px;margin:8px 0 10px;line-height:1.25}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.vs > div{border-radius:12px;padding:10px 12px;min-width:0}
+.vs .lit{background:var(--surface-2)}
+.vs .lit .v{text-decoration:line-through;text-decoration-color:var(--bad);text-decoration-thickness:2px;color:var(--muted)}
+.vs .real{background:color-mix(in srgb,var(--good) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--good) 40%,transparent)}
+.vs b{display:block;font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.vs .real b{color:var(--good)}
+.vs .v{font-weight:700;font-size:16px}
+.vs .e2{font-family:var(--f-read);font-size:13px;color:var(--muted)}
+.why{margin:10px 0 0;font-size:14px;border-left:3px solid var(--bad);padding-left:10px}
+.dxn{font-size:13px;color:var(--pine);font-weight:600;margin-top:8px}
+.opcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:14px;padding-block:12px}
+.opcards .trapc{margin:0;background:var(--surface)}
+/* 使用說明 */
+.howto{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.55);display:flex;flex-direction:column}
+.howto-bar{background:var(--surface);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-block:calc(10px + env(safe-area-inset-top,0px)) 10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.howto-bar .seg button{font-family:var(--f-ui)}
+.howto-body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:16px max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.howto-body img{display:block;width:100%;max-width:640px;margin:0 auto;border-radius:14px;background:var(--surface)}
+footer{color:var(--muted);font-size:12px;padding-block:20px 30px;text-align:center}
+.empty{color:var(--muted)}
+@media print{
+  header.top,nav,.tabpane:not(#tab-report),.actions,.noprint,footer,.toast{display:none!important}
+  body{background:#fff;color:#000}
+  .rcard{break-inside:avoid;border-color:#bbb}
+}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 6c-2 0-3 1.4-3 3.2-6.5.7-12 4.2-12 9.8h30c0-5.6-5.5-9.1-12-9.8C27 7.4 26 6 24 6z" fill="var(--oak)"/><path d="M11 21h26c0 11-6 20-13 20S11 32 11 21z" fill="var(--pine)"/><path d="M24 4c3-2 7-1 8 1" stroke="var(--pine)" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>
+      <div><b>橡木美語</b><small>Oak English · Reading Lab</small></div>
+    </div>
+    <div class="spacer"></div>
+    <div class="tools">
+      <button class="ibtn" id="helpBtn" aria-label="使用說明">❓ 說明</button>
+      <button class="ibtn" id="fsDown" aria-label="字體縮小">A−</button>
+      <button class="ibtn" id="fsUp" aria-label="字體放大">A+</button>
+    </div>
+  </div>
+  <div class="tabrow"><div class="wrap">
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="listen" aria-selected="true">① 聆聽與閱讀</button>
+      <button role="tab" data-tab="phrases" aria-selected="false">② 單字片語</button>
+      <button role="tab" data-tab="stack" aria-selected="false">③ 堆疊練習</button>
+      <button role="tab" data-tab="shadow" aria-selected="false">④ 跟讀練習</button>
+      <button role="tab" data-tab="report" aria-selected="false">⑤ 學習報告</button>
+    </nav>
+  </div></div>
+</header>
+
+<main class="wrap">
+  <div class="unit">
+    <div class="eyebrow">KC Online 慣用語閱讀 · Bridges</div>
+    <h1>'Build Bridges' with These Expressions</h1>
+    <p>三個和「橋」有關的英文說法：build bridges、burn your bridges、water under the bridge</p>
+  </div>
+
+  <!-- LISTEN -->
+  <section class="tabpane" id="tab-listen">
+    <div class="listen">
+      <div style="min-width:0">
+        <div class="bar">
+          <button class="btn" id="playAll">▶ 整篇播放</button>
+          <div class="seg" role="group" aria-label="語速">
+            <button data-rate="0.9" aria-pressed="true">0.9×</button>
+            <button data-rate="1" aria-pressed="false">1.0×</button>
+          </div>
+          <label class="switch"><input type="checkbox" id="zhToggle"> 中文翻譯</label>
+          <select id="voiceSel" aria-label="選擇語音"></select>
+        </div>
+        <div class="legend">
+          <span><i class="sw m"></i>本課重點片語</span>
+          <span><i class="sw k"></i>B1 以上重點單字</span>
+          <span><i class="sw s"></i>實用片語</span>
+          <span><i class="sw t"></i>字面看不出意思</span>
+          <span>點句首 ▶ 播放單句・點任何字查詢</span>
+        </div>
+        <article class="reading" id="article"></article>
+      </div>
+      <aside class="panel" id="panel" aria-live="polite"></aside>
+    </div>
+    <div class="backdrop" id="backdrop"></div>
+  </section>
+
+  <!-- PHRASES -->
+  <section class="tabpane" id="tab-phrases" hidden>
+    <h2 class="section-h">重點單字<small>CEFR B1 以上（含 B1）・點卡片看完整解釋</small></h2>
+    <div class="kwgrid" id="kwgrid"></div>
+    <h2 class="section-h">本課重點片語<small>附狄克生片語中相同或相似的用法</small></h2>
+    <div class="idioms" id="idioms"></div>
+    <h2 class="section-h">字面看不出意思的片語與搭配詞<small>每個字都認識，合起來卻容易看錯・依課文順序</small></h2>
+    <div class="opcards" id="opaque"></div>
+    <h2 class="section-h">其他實用片語</h2>
+    <p class="hint">點一下看中英文解釋、例句和搭配詞。</p>
+    <div class="chips" id="subphrases" style="margin-bottom:40px"></div>
+  </section>
+
+  <!-- STACK -->
+  <section class="tabpane" id="tab-stack" hidden>
+    <h2 class="section-h">堆疊練習<small>單字 → 搭配詞 → 片語 → 課文句子，一層一層加上去</small></h2>
+    <div class="bar" style="margin-top:10px">
+      <button class="btn ghost" id="ladAll">全部展開</button>
+      <button class="btn ghost" id="ladReset">全部收合</button>
+      <span class="hint" style="margin:0">按「加一層 ▸」會加上新的部分並唸出來；黃色是這一層新加的字。</span>
+    </div>
+    <div class="ladders" id="ladders" style="padding-bottom:40px"></div>
+  </section>
+
+  <!-- SHADOW -->
+  <section class="tabpane" id="tab-shadow" hidden>
+    <div class="namebar" id="nameBar" hidden></div>
+    <div class="modes" id="modes"></div>
+    <div class="dots" id="dots"></div>
+    <div class="stage" id="stage"></div>
+  </section>
+
+  <!-- REPORT -->
+  <section class="tabpane" id="tab-report" hidden>
+    <div class="report" id="report"></div>
+  </section>
+</main>
+<div class="howto" id="howto" hidden role="dialog" aria-modal="true" aria-label="使用說明">
+  <div class="howto-bar">
+    <div class="seg" role="group" aria-label="說明主題"><button data-howto="shadow" aria-pressed="true">跟讀練習怎麼做</button><button data-howto="report" aria-pressed="false">學習報告怎麼傳</button></div>
+    <button class="btn ghost" id="howtoClose" style="min-height:40px;padding:6px 14px">關閉 ✕</button>
+  </div>
+  <div class="howto-body" id="howtoBody"><img id="howtoImg" src="guide-shadowing.jpg" alt="跟讀練習說明" loading="lazy"></div>
+</div>
+<footer class="wrap">文章來源：KC Online・僅供橡木美語學生課堂與課後練習使用</footer>
+
+<script>
+/* ================= DATA ================= */
+const SENT = [
+ {en:`'Build Bridges' with These Expressions`, zh:`用這些說法「搭起橋梁」`},
+ {en:`Bridges don't just help us get from place to place, they can also help us express ourselves.`, zh:`橋不只能帶我們從一個地方到另一個地方，也能幫助我們表達自己。`},
+ {en:`Here are some examples:`, zh:`以下是一些例子：`},
+ {en:`If someone is trying to improve their relationship with another group or person, they are "building bridges."`, zh:`如果有人正努力改善和另一個團體或另一個人的關係，我們就說他們在「搭橋」（修補關係）。`},
+ {en:`This is because they're trying to make it easier for people to get closer with one another, just like a bridge would.`, zh:`這是因為他們正努力讓人們更容易彼此親近，就像一座橋的作用一樣。`},
+ {en:`So if your neighbor doesn't like you, you might say to your partner, "We need to build bridges with the neighbor, let's invite him to dinner."`, zh:`所以如果你的鄰居不喜歡你，你可能會對另一半說：「我們得跟鄰居改善關係，請他來吃晚餐吧。」`},
+ {en:`But if a person does something they can't undo, especially something that destroys a relationship or an opportunity, you can say they have "burned their bridges."`, zh:`但如果一個人做了無法挽回的事，尤其是毀掉一段關係或一個機會的事，你可以說他們「把橋燒了」（自斷後路）。`},
+ {en:`The expression comes from war, when an army would burn bridges to stop their enemy from crossing them.`, zh:`這個說法來自戰爭：當時軍隊會把橋燒掉，阻止敵人過橋。`},
+ {en:`So if you ask your neighbor to dinner and he tells you to never speak to him again, you could say, "You could have just said 'no thanks' — there's no need to burn your bridges."`, zh:`所以如果你邀鄰居吃晚餐，他卻叫你永遠別再跟他說話，你可以說：「你說聲『不用了，謝謝』就好，沒必要把話說絕。」`},
+ {en:`If something happened a long time ago and is no longer important or worth thinking about, you can say that it's "water under the bridge."`, zh:`如果某件事很久以前發生，而且已經不重要、不值得再去想，你可以說那是「橋下的流水」（都過去了）。`},
+ {en:`Water in a river is always moving — so water that's gone under the bridge is no longer important, and it will never return.`, zh:`河水總是在流動，所以已經流過橋下的水就不再重要，而且永遠不會回來。`},
+ {en:`So if, years later, your neighbor apologizes for being rude to you, you might say, "Don't worry about it, it's all water under the bridge now."`, zh:`所以如果多年後，鄰居為了曾經對你無禮而道歉，你可能會說：「別在意，那些都過去了。」`}
+];
+const PARAS = [[1,2],[3,4],[5],[6,7],[8],[9,10],[11]];
+const UNIT_KEY = 'oak-reading-build-bridges-v2';
+const OLD_KEY = 'oak-reading-build-bridges-v1';
+const UNIT_SHORT = 'Build Bridges';
+const UNIT_TITLE = SENT[0].en;
+
+/* dictionary: [ipa, pos, 中文, English, example, 例句中文, "搭配|中文;..."] */
+const DICT = {
+bridge:["/brɪdʒ/","n.","橋；橋梁","a structure built over a river or road so people can cross it","We walked across the old stone bridge.","我們走過那座古老的石橋。","cross a bridge|過橋;build a bridge|建一座橋;a bridge over the river|河上的橋"],
+"don't":["/dont/","aux.","不（do not 的縮寫）","short form of \"do not\"","I don't like rainy days.","我不喜歡下雨天。","don't worry|別擔心;don't forget|別忘了;don't + 動詞|不要…"],
+just:["/dʒʌst/","adv.","只是；僅僅；就","only; simply","I just want a glass of water.","我只是想要一杯水。","not just A, but also B|不只A，還有B;just like|就像;just now|剛剛"],
+help:["/hɛlp/","v.","幫助","to make it easier for someone to do something","Can you help me carry this box?","你可以幫我搬這個箱子嗎？","help sb (to) + V|幫某人做…;help with sth|幫忙某事;ask for help|求助"],
+us:["/ʌs/","pron.","我們（受格）","the object form of \"we\"","Our teacher gave us a quiz.","老師給我們一個小考。","with us|和我們;for us|為了我們"],
+get:["/gɛt/","v.","到達；變得；得到","to arrive somewhere; to become","How do you get to school?","你怎麼到學校的？","get to + 地點|到達;get closer|變得更親近;get home|到家"],
+from:["/frʌm/","prep.","從；來自","showing where something starts or comes from","She comes from Taichung.","她來自台中。","from A to B|從A到B;come from|來自;stop sb from + Ving|阻止某人做…"],
+place:["/ples/","n.","地方","a particular area or position","This park is my favorite place.","這座公園是我最喜歡的地方。","from place to place|從一處到另一處;take place|發生;a quiet place|安靜的地方"],
+to:["/tu/","prep.","到；向；（接動詞原形）","toward a place or person; used before a verb","I go to school by bus.","我搭公車上學。","go to + 地點|去…;want to + V|想要…;say to sb|對某人說"],
+they:["/ðe/","pron.","他們；它們","those people or things","They are my classmates.","他們是我的同學。","they say…|人們說…"],
+can:["/kæn/","aux.","能；可以","to be able to","Can you swim?","你會游泳嗎？","can + V|能…;can also|也可以"],
+also:["/ˈɔlso/","adv.","也","in addition; too","I like cats, and I also like dogs.","我喜歡貓，也喜歡狗。","can also|也可以;not only… but also…|不只…還…"],
+express:["/ɪkˈsprɛs/","v.","表達","to show a feeling or idea with words or actions","It's hard to express my feelings in English.","用英文表達我的感受很難。","express yourself|表達自己;express feelings|表達感受;express an opinion|表達意見"],
+ourselves:["/ˌaʊrˈsɛlvz/","pron.","我們自己","used when \"we\" do something to us","We cooked dinner by ourselves.","我們自己煮了晚餐。","by ourselves|我們自己（獨力）;enjoy ourselves|我們玩得開心"],
+here:["/hɪr/","adv.","這裡","in or at this place","Here is your book.","你的書在這裡。","Here are + 複數|這裡有…;come here|過來"],
+be:["/bi/","v.","是；在","used to say what or where someone or something is","She is my best friend.","她是我最好的朋友。","be + 形容詞|是…的;be + Ving|正在…"],
+some:["/sʌm/","det.","一些","a number or amount of","I have some questions.","我有一些問題。","some examples|一些例子;some water|一些水"],
+example:["/ɪgˈzæmpəl/","n.","例子","something that shows what others are like","Can you give me an example?","你可以舉一個例子嗎？","for example|例如;give an example|舉例;a good example|好例子"],
+if:["/ɪf/","conj.","如果","used to say what may happen","If it rains, we'll stay home.","如果下雨，我們就待在家。","if so|如果這樣的話;even if|即使"],
+someone:["/ˈsʌmˌwʌn/","pron.","某人","a person who is not named","Someone is at the door.","有人在門口。","someone else|別人"],
+try:["/traɪ/","v.","試著；努力","to make an effort to do something","I'm trying to finish my homework.","我正在努力寫完功課。","try to + V|努力做…;try your best|盡力;try on|試穿"],
+improve:["/ɪmˈpruv/","v.","改善；改進","to make something better","Reading every day can improve your English.","每天閱讀可以提升你的英文。","improve a relationship|改善關係;improve your skills|提升能力;improve grades|提高成績"],
+their:["/ðɛr/","det.","他們的","belonging to them","They love their dog.","他們很愛他們的狗。","their own|他們自己的"],
+relationship:["/rɪˈleʃənˌʃɪp/","n.","關係","the way two people or groups feel and act toward each other","She has a good relationship with her sister.","她和姊姊關係很好。","a relationship with sb|和某人的關係;build a relationship|建立關係;destroy a relationship|破壞關係"],
+with:["/wɪð/","prep.","和；跟","together with someone or something","I play basketball with my friends.","我和朋友打籃球。","with one another|彼此之間;get along with sb|和某人相處"],
+another:["/əˈnʌðɚ/","det.","另一個","one more; a different one","Can I have another cookie?","我可以再拿一塊餅乾嗎？","one another|彼此;another day|改天"],
+group:["/grup/","n.","團體；組","a number of people together","Our class has four groups.","我們班有四個小組。","a group of|一群…;group work|小組活動"],
+or:["/ɔr/","conj.","或；或者","used between choices","Do you want tea or juice?","你要茶還是果汁？","A or B|A或B;or not|要不要"],
+person:["/ˈpɝsən/","n.","人","a human being","He is a kind person.","他是個善良的人。","in person|親自;a kind person|善良的人"],
+this:["/ðɪs/","pron.","這；這個","the thing just mentioned or near you","This is my bag.","這是我的包包。","This is because…|這是因為…"],
+because:["/bɪˈkɔz/","conj.","因為","for the reason that","I'm tired because I slept late.","我很累，因為我太晚睡。","This is because…|這是因為…;because of + 名詞|因為…"],
+"they're":["/ðɛr/","pron.+v.","他們是（they are 縮寫）","short form of \"they are\"","They're in the library.","他們在圖書館。","they're trying to|他們正努力…"],
+make:["/mek/","v.","使；做","to cause something to be a certain way; to create","Music makes me happy.","音樂讓我開心。","make it easier for sb to + V|讓某人更容易…;make friends|交朋友;make a mistake|犯錯"],
+it:["/ɪt/","pron.","它","the thing already mentioned","I lost my pen. Have you seen it?","我的筆不見了，你有看到嗎？","make it + 形容詞|使它…"],
+easy:["/ˈizi/","adj.","容易的","not difficult","This question is easy.","這題很簡單。","easy to + V|容易做…;make it easier|讓它更容易"],
+for:["/fɔr/","prep.","為了；對…來說","intended for; used to show who","This gift is for you.","這份禮物是給你的。","for example|例如;apologize for|為…道歉;easy for sb|對某人來說容易"],
+people:["/ˈpipəl/","n.","人們","more than one person","Many people like this song.","很多人喜歡這首歌。","young people|年輕人;people say…|人們說…"],
+close:["/klos/","adj.","親近的；接近的","near; having a strong friendship","The two friends became closer after the trip.","旅行後兩個朋友變得更親近。","get closer|變得更親近;be close to sb|和某人很親"],
+one:["/wʌn/","pron.","一；一個","a single person or thing","I have one brother.","我有一個哥哥。","one another|彼此;one day|有一天"],
+like:["/laɪk/","prep./v.","像；喜歡","similar to; to enjoy","She sings like a bird.","她唱歌像小鳥一樣。","just like|就像;look like|看起來像"],
+a:["/ə/","art.","一個","one (used before a singular noun)","I saw a cat.","我看到一隻貓。","a long time ago|很久以前"],
+would:["/wʊd/","aux.","會（表示推測、過去習慣）","used to talk about what usually happened or might happen","When I was little, I would play outside every day.","我小時候每天都會在外面玩。","would like|想要;would + V|會…"],
+so:["/so/","conj.","所以","for that reason","It was raining, so we stayed home.","下雨了，所以我們待在家。","so if…|所以如果…;so that|以便"],
+your:["/jʊr/","det.","你的","belonging to you","Is this your phone?","這是你的手機嗎？","your own|你自己的"],
+neighbor:["/ˈnebɚ/","n.","鄰居","a person who lives near you","Our neighbor has a big dog.","我們的鄰居養了一隻大狗。","next-door neighbor|隔壁鄰居;a friendly neighbor|友善的鄰居"],
+"doesn't":["/ˈdʌzənt/","aux.","不（does not 的縮寫）","short form of \"does not\"","He doesn't eat meat.","他不吃肉。","doesn't + V|（他/她）不…"],
+you:["/ju/","pron.","你；你們","the person being spoken to","I miss you.","我想你。","you know|你知道"],
+might:["/maɪt/","aux.","可能；或許","used to say something is possible","It might rain later.","等一下可能會下雨。","might + V|可能會…"],
+say:["/se/","v.","說","to speak words","What did you say?","你說什麼？","say to sb|對某人說;say thanks|道謝;say no|拒絕"],
+partner:["/ˈpɑrtnɚ/","n.","伴侶；夥伴","the person you live with or work with","Practice the dialog with your partner.","和你的夥伴練習對話。","business partner|生意夥伴;dance partner|舞伴"],
+we:["/wi/","pron.","我們","the speaker and others","We are in the same class.","我們同班。","we need to|我們需要…"],
+need:["/nid/","v./n.","需要","to have to have something; a reason to do something","We need more chairs.","我們需要更多椅子。","need to + V|需要做…;there's no need to + V|沒必要…"],
+build:["/bɪld/","v.","建造；建立","to make something by putting parts together","They built a new library.","他們蓋了一座新圖書館。","build a house|蓋房子;build trust|建立信任;build bridges|修補關係"],
+the:["/ðə/","art.","這個；那個（定冠詞）","used before a noun everyone knows","Close the door, please.","請關門。","the same|同樣的"],
+"let's":["/lɛts/","v.","我們一起…吧（let us 縮寫）","used to suggest doing something together","Let's go to the park!","我們去公園吧！","Let's + V|我們來…吧"],
+invite:["/ɪnˈvaɪt/","v.","邀請","to ask someone to come to an event","She invited me to her birthday party.","她邀請我參加她的生日派對。","invite sb to + 活動|邀請某人參加…;invite sb to dinner|邀請某人吃晚餐"],
+him:["/hɪm/","pron.","他（受格）","the object form of \"he\"","I called him last night.","我昨晚打電話給他。","speak to him|跟他說話"],
+dinner:["/ˈdɪnɚ/","n.","晚餐","the main meal of the evening","We have dinner at seven.","我們七點吃晚餐。","have dinner|吃晚餐;invite sb to dinner|請某人吃晚餐"],
+but:["/bʌt/","conj.","但是","used to show something different","I'm tired, but I'm happy.","我很累，但很開心。","but also|而且也"],
+do:["/du/","v./aux.","做；（助動詞）","to perform an action","What do you do after school?","你放學後做什麼？","do something|做某事;do homework|寫功課"],
+something:["/ˈsʌmθɪŋ/","pron.","某事；某物","a thing that is not named","I want to tell you something.","我想告訴你一件事。","something important|重要的事"],
+"can't":["/kænt/","aux.","不能（cannot 縮寫）","short form of \"cannot\"","I can't find my keys.","我找不到鑰匙。","can't + V|不能…;can't wait|等不及"],
+undo:["/ʌnˈdu/","v.","復原；挽回","to change something back to how it was before","You can't undo what you said.","說出口的話收不回來。","undo a mistake|挽回錯誤;undo changes|復原變更"],
+especially:["/ɪˈspɛʃəli/","adv.","尤其；特別是","more than usual; most of all","I love fruit, especially mangoes.","我愛水果，尤其是芒果。","especially when|尤其是當…;especially for|特別為了…"],
+that:["/ðæt/","pron.","那；（關係代名詞）","used to point to something, or to add information about a noun","This is the book that I like.","這是我喜歡的書。","something that…|…的事情"],
+destroy:["/dɪˈstrɔɪ/","v.","破壞；摧毀","to damage something so badly it cannot be used","The storm destroyed many houses.","暴風雨摧毀了很多房子。","destroy a relationship|破壞關係;destroy trust|摧毀信任"],
+an:["/ən/","art.","一個（用在母音開頭字前）","one (before a vowel sound)","She ate an apple.","她吃了一顆蘋果。","an opportunity|一個機會"],
+opportunity:["/ˌɑpɚˈtunəti/","n.","機會","a chance to do something good","This trip is a great opportunity to practice English.","這趟旅行是練習英文的好機會。","a great opportunity|好機會;miss an opportunity|錯過機會;an opportunity to + V|做…的機會"],
+have:["/hæv/","aux./v.","有；（完成式助動詞）","used with a past participle; to own","I have finished my homework.","我已經寫完功課了。","have + p.p.|已經…;could have + p.p.|本來可以…"],
+burn:["/bɝn/","v.","燒；燃燒","to destroy something with fire","Be careful not to burn your hand.","小心別燙到手。","burn down|燒毀;burn your bridges|自斷後路"],
+expression:["/ɪkˈsprɛʃən/","n.","說法；用語；表情","a group of words with a special meaning; a look on the face","\"Break a leg\" is a fun expression.","\"Break a leg\"（祝好運）是個有趣的說法。","a common expression|常見說法;facial expression|臉部表情"],
+come:["/kʌm/","v.","來","to move toward a place","Come here, please.","請過來。","come from|來自;come back|回來"],
+war:["/wɔr/","n.","戰爭","fighting between countries or groups","Many people lost their homes in the war.","很多人在戰爭中失去家園。","in a war|在戰爭中;win a war|打贏戰爭"],
+when:["/wɛn/","conj.","當…時","at the time that","Call me when you get home.","你到家時打給我。","when I was young|我小時候"],
+army:["/ˈɑrmi/","n.","軍隊","a large group of soldiers","The army crossed the river at night.","軍隊在夜裡過河。","join the army|從軍;an enemy army|敵軍"],
+stop:["/stɑp/","v.","阻止；停止","to make something not happen or not continue","The rain stopped us from playing outside.","雨讓我們沒辦法在外面玩。","stop sb from + Ving|阻止某人做…;stop + Ving|停止做…"],
+enemy:["/ˈɛnəmi/","n.","敵人","a person or group that fights against you","The two countries were enemies.","那兩國曾是敵人。","an enemy army|敵軍;make enemies|樹敵"],
+cross:["/krɔs/","v.","越過；穿過","to go from one side to the other","Look both ways before you cross the street.","過馬路前要左右看。","cross the road|過馬路;cross a bridge|過橋"],
+them:["/ðɛm/","pron.","他們；它們（受格）","the object form of \"they\"","I like these shoes. I'll buy them.","我喜歡這雙鞋，我要買。","crossing them|越過它們"],
+ask:["/æsk/","v.","問；邀請","to say a question; to invite","Can I ask you a question?","我可以問你一個問題嗎？","ask sb to dinner|邀某人吃晚餐;ask a question|問問題;ask for help|求助"],
+and:["/ænd/","conj.","和；而且","used to join words or ideas","I have a cat and a dog.","我有一隻貓和一隻狗。","and then|然後"],
+he:["/hi/","pron.","他","a man or boy already mentioned","He is my brother.","他是我哥哥。",""],
+tell:["/tɛl/","v.","告訴；叫（某人做）","to say something to someone","Mom told me to clean my room.","媽媽叫我打掃房間。","tell sb to + V|叫某人做…;tell the truth|說實話"],
+never:["/ˈnɛvɚ/","adv.","從不；永遠不","not at any time","I will never forget you.","我永遠不會忘記你。","never again|再也不"],
+speak:["/spik/","v.","說話","to say words; to talk","Can you speak English?","你會說英文嗎？","speak to sb|跟某人說話;speak English|說英文"],
+again:["/əˈgɛn/","adv.","再一次","one more time","Please say it again.","請再說一次。","never again|再也不;again and again|一再"],
+could:["/kʊd/","aux.","可以；能夠（較委婉）","the past of \"can\"; used to suggest something politely","You could ask your teacher.","你可以問問老師。","could have + p.p.|本來可以…（但沒有）"],
+no:["/no/","adv./det.","不；沒有","not any; used to say \"not\"","There is no milk in the fridge.","冰箱裡沒有牛奶。","no thanks|不用了，謝謝;no need|不需要;no longer|不再"],
+thanks:["/θæŋks/","n.","謝謝","a way to say thank you","Thanks for your help!","謝謝你的幫忙！","no thanks|不用了，謝謝;thanks for + N/Ving|謝謝你…"],
+"there's":["/ðɛrz/","v.","有（there is 縮寫）","short form of \"there is\"","There's a cat on the roof.","屋頂上有一隻貓。","there's no need to + V|沒必要…"],
+happen:["/ˈhæpən/","v.","發生","to take place","What happened?","發生什麼事了？","happen to sb|發生在某人身上"],
+long:["/lɔŋ/","adj./adv.","長的；長久地","for a lot of time","We waited for a long time.","我們等了很久。","a long time ago|很久以前;no longer|不再"],
+time:["/taɪm/","n.","時間","minutes, hours, days, etc.","Do you have time to talk?","你有時間聊聊嗎？","a long time ago|很久以前;on time|準時"],
+ago:["/əˈgo/","adv.","以前","before now","I moved here two years ago.","我兩年前搬來這裡。","a long time ago|很久以前;two days ago|兩天前"],
+important:["/ɪmˈpɔrtənt/","adj.","重要的","having a big effect or meaning","Sleep is important for kids.","睡眠對孩子很重要。","It's important to + V|做…很重要;important to sb|對某人重要"],
+worth:["/wɝθ/","adj.","值得的","good or useful enough to do","This book is worth reading.","這本書值得一讀。","be worth + Ving|值得做…;worth it|值得"],
+think:["/θɪŋk/","v.","思考；想","to use your mind","Think before you speak.","說話前先想一想。","think about|思考…;I think…|我認為…"],
+about:["/əˈbaʊt/","prep.","關於","on the subject of","This story is about a brave girl.","這個故事是關於一個勇敢的女孩。","think about|思考;worry about|擔心"],
+"it's":["/ɪts/","pron.+v.","它是（it is / it has 縮寫）","short form of \"it is\" or \"it has\"","It's very hot today.","今天很熱。","it's all…|全都…"],
+water:["/ˈwɔtɚ/","n.","水","the clear liquid in rivers and rain","Drink more water.","多喝水。","a glass of water|一杯水;water under the bridge|過去的事"],
+under:["/ˈʌndɚ/","prep.","在…下面","below something","The cat is under the table.","貓在桌子下面。","under the bridge|在橋下"],
+in:["/ɪn/","prep.","在…裡面","inside","The fish live in the river.","魚住在河裡。","in a river|在河裡"],
+river:["/ˈrɪvɚ/","n.","河","a long natural line of moving water","We swam in the river.","我們在河裡游泳。","across the river|河的對岸;a river bank|河岸"],
+always:["/ˈɔlwez/","adv.","總是","every time; all the time","She always smiles.","她總是面帶微笑。","always + V|總是…"],
+move:["/muv/","v.","移動；搬家","to go from one place to another","Don't move! I'm taking a photo.","別動！我在拍照。","keep moving|持續移動;move to + 地點|搬到…"],
+"that's":["/ðæts/","pron.+v.","那是（that is / that has 縮寫）","short form of \"that is\" or \"that has\"（本文中 that's gone = that has gone）","That's a great idea!","那是個好主意！","that's right|沒錯"],
+go:["/go/","v.","去；（水）流走","to move from one place to another","Where did the time go?","時間都跑去哪了？","be gone|不見了、離開了;go under|從下面通過"],
+will:["/wɪl/","aux.","將會","used to talk about the future","I will call you tomorrow.","我明天會打給你。","will never|永遠不會"],
+return:["/rɪˈtɝn/","v.","回來；歸還","to come or go back","He returned home late.","他很晚才回家。","return home|回家;return a book|還書"],
+year:["/jɪr/","n.","年","twelve months","I have studied English for three years.","我學英文三年了。","years later|多年後;every year|每年"],
+later:["/ˈletɚ/","adv.","後來；之後","after the time you are talking about","See you later!","待會見！","years later|多年後;later on|之後"],
+apologize:["/əˈpɑləˌdʒaɪz/","v.","道歉","to say you are sorry","He apologized for being late.","他為遲到道歉。","apologize for sth|為某事道歉;apologize to sb|向某人道歉"],
+rude:["/rud/","adj.","無禮的；沒禮貌的","not polite","It's rude to talk with food in your mouth.","嘴裡有食物時說話很沒禮貌。","be rude to sb|對某人無禮;rude behavior|無禮的行為"],
+worry:["/ˈwɝi/","v.","擔心","to keep thinking about problems","Don't worry. You'll be fine.","別擔心，你會沒事的。","worry about|擔心…;Don't worry about it.|別在意。"],
+all:["/ɔl/","pron./adv.","全部；完全","everything; completely","It's all done!","全部完成了！","all day|整天;all of us|我們全部"],
+now:["/naʊ/","adv.","現在","at this time","I'm busy now.","我現在很忙。","right now|立刻；現在"],
+these:["/ðiz/","det.","這些","the things here","These shoes are new.","這雙鞋是新的。","these days|最近"]
+};
+const FORMS = {
+ bridges:["bridge","bridge 的複數"], are:["be","be 的現在式（複數）"], is:["be","be 的現在式（單數）"], being:["be","be 的動名詞"],
+ examples:["example","example 的複數"], trying:["try","try 的現在分詞（正在…）"], building:["build","build 的現在分詞"],
+ easier:["easy","easy 的比較級（更容易）"], closer:["close","close 的比較級（更接近）"], does:["do","do 的第三人稱單數"],
+ destroys:["destroy","destroy 的第三人稱單數"], burned:["burn","burn 的過去分詞"], comes:["come","come 的第三人稱單數"],
+ crossing:["cross","cross 的動名詞"], tells:["tell","tell 的第三人稱單數"], said:["say","say 的過去分詞"],
+ happened:["happen","happen 的過去式"], thinking:["think","think 的動名詞"], longer:["long","long 的比較級（no longer 不再）"],
+ moving:["move","move 的現在分詞"], gone:["go","go 的過去分詞（has gone）"], years:["year","year 的複數"],
+ apologizes:["apologize","apologize 的第三人稱單數"], expressions:["expression","expression 的複數"]
+};
+
+/* phrases */
+const PHR = [
+ {id:"build-bridges", main:true, label:"build bridges (with sb)", pats:[["building","bridges"],["build","bridges"]],
+  zh:"修補關係；拉近彼此的距離", en:"to try to improve a relationship and help people get closer",
+  origin:"橋讓河兩岸的人可以互相往來，所以「搭橋」就是讓人和人更容易靠近。",
+  ex:"Our new class leader is trying to build bridges between the two groups.", exZh:"新班長正努力拉近兩群同學之間的距離。",
+  col:"build bridges with sb|和某人修補關係;build bridges between A and B|在A和B之間搭起橋梁"},
+ {id:"burn-bridges", main:true, label:"burn your bridges", pats:[["burned","their","bridges"],["burn","bridges"],["burn","your","bridges"]],
+  zh:"自斷後路；把關係弄到無法挽回", en:"to do something that destroys a relationship or chance, so you can't go back",
+  origin:"來自戰爭：軍隊把橋燒掉，敵人過不了河，但自己也回不去了。",
+  ex:"Don't shout at your boss when you quit. You don't want to burn your bridges.", exZh:"辭職時別對老闆大吼，你不會想斷了自己的後路。",
+  col:"burn your bridges with sb|和某人關係破裂;there's no need to burn your bridges|沒必要把話說絕"},
+ {id:"water-under", main:true, label:"water under the bridge", pats:[["water","under","the","bridge"]],
+  zh:"過去的事（已不重要，就讓它過去）", en:"something that happened in the past and is no longer important",
+  origin:"河水一直在流，流過橋下的水不會再回來，就像過去的事一樣。",
+  ex:"We had a fight last year, but it's water under the bridge now.", exZh:"我們去年吵過架，但現在都過去了。",
+  col:"It's (all) water under the bridge.|都過去了。;let it be water under the bridge|就讓它過去吧"},
+ {id:"place-to-place", label:"from place to place", pats:[["from","place","to","place"]], zh:"從一處到另一處；到處", en:"moving from one place to another", ex:"The bus takes people from place to place.", exZh:"公車載人們往來各地。", col:"travel from place to place|四處旅行"},
+ {id:"express-oneself", label:"express oneself", pats:[["express","ourselves"]], zh:"表達自己（的想法或感受）", en:"to say or show what you think or feel", ex:"Drawing helps him express himself.", exZh:"畫畫幫助他表達自己。", col:"express yourself clearly|清楚表達自己;express myself in English|用英文表達自己"},
+ {id:"try-to", label:"try to + V", pats:[["trying","to"]], zh:"努力去做…", en:"to make an effort to do something", ex:"I'm trying to wake up earlier.", exZh:"我正努力早點起床。", col:"try to understand|試著了解;try not to + V|盡量不要…"},
+ {id:"improve-rel", label:"improve a relationship with sb", pats:[["improve","their","relationship","with"]], zh:"改善和某人的關係", en:"to make a relationship better", ex:"He wants to improve his relationship with his dad.", exZh:"他想改善和爸爸的關係。", col:"a good relationship|良好的關係;build a relationship|建立關係"},
+ {id:"this-because", label:"This is because…", pats:[["this","is","because"]], zh:"這是因為…", en:"used to give the reason for something you just said", ex:"I'm hungry. This is because I skipped breakfast.", exZh:"我好餓，這是因為我沒吃早餐。", col:"That's because…|那是因為…"},
+ {id:"make-easier", label:"make it easier for sb to + V", pats:[["make","it","easier","for"]], zh:"讓某人更容易做…", en:"to help someone do something with less difficulty", ex:"Big letters make it easier for kids to read.", exZh:"大字讓孩子更容易閱讀。", col:"make it possible for sb to + V|讓某人能夠…"},
+ {id:"get-closer", label:"get closer (with/to sb)", pats:[["get","closer"]], zh:"變得更親近", en:"to become better friends", ex:"Playing games together helped us get closer.", exZh:"一起玩遊戲讓我們變得更親近。", col:"get closer to sb|和某人更親近"},
+ {id:"one-another", label:"one another", pats:[["one","another"]], zh:"彼此；互相", en:"each other", ex:"The students help one another.", exZh:"學生們互相幫忙。", col:"talk to one another|互相交談;help one another|互相幫忙"},
+ {id:"just-like", label:"just like", pats:[["just","like"]], zh:"就像…一樣", en:"in exactly the same way as", ex:"She sings just like her mom.", exZh:"她唱歌就跟她媽媽一樣。", col:"just like you|就像你一樣"},
+ {id:"invite-dinner", label:"invite sb to dinner", pats:[["invite","him","to","dinner"]], zh:"邀請某人吃晚餐", en:"to ask someone to come and eat dinner with you", ex:"Let's invite Grandma to dinner on Sunday.", exZh:"我們星期天請奶奶來吃晚餐吧。", col:"invite sb to a party|邀請某人參加派對"},
+ {id:"ask-dinner", label:"ask sb to dinner", pats:[["ask","your","neighbor","to","dinner"]], zh:"邀某人吃晚餐", en:"to invite someone to have dinner with you", ex:"He asked his new classmate to dinner.", exZh:"他邀新同學去吃晚餐。", col:"ask sb out|約某人出去"},
+ {id:"come-from", label:"come from", pats:[["comes","from"]], zh:"來自；源自", en:"to start or be made in a place or thing", ex:"This word comes from French.", exZh:"這個字源自法文。", col:"come from + 國家|來自某國"},
+ {id:"stop-from", label:"stop sb from + Ving", pats:[["stop","their","enemy","from","crossing"]], zh:"阻止某人做…", en:"to not let someone do something", ex:"The fence stops the dog from running away.", exZh:"圍籬讓狗跑不出去。", col:"keep sb from + Ving|使某人不能…"},
+ {id:"tell-to", label:"tell sb to + V", pats:[["tells","you","to"]], zh:"叫某人做…", en:"to say that someone should do something", ex:"The teacher told us to open our books.", exZh:"老師叫我們打開課本。", col:"tell sb not to + V|叫某人不要…"},
+ {id:"could-have", label:"could have + p.p.", pats:[["could","have","just","said"]], zh:"本來可以…（但沒有這麼做）", en:"used to say something was possible but did not happen", ex:"You could have told me earlier!", exZh:"你本來可以早點告訴我的！", col:"could have just + p.p.|只要…就好了"},
+ {id:"no-thanks", label:"no thanks", pats:[["no","thanks"]], zh:"不用了，謝謝", en:"a polite way to say no", ex:"\"More cake?\" \"No thanks, I'm full.\"", exZh:"「還要蛋糕嗎？」「不用了，謝謝，我飽了。」", col:"No, thank you.|不用了，謝謝您。"},
+ {id:"no-need", label:"There's no need to + V", pats:[["there's","no","need","to"]], zh:"沒必要…", en:"you don't have to do something", ex:"There's no need to hurry. We have time.", exZh:"不用急，我們還有時間。", col:"no need to worry|不用擔心"},
+ {id:"long-ago", label:"a long time ago", pats:[["a","long","time","ago"]], zh:"很久以前", en:"at a time far in the past", ex:"A long time ago, there was a little village.", exZh:"很久以前，有一座小村莊。", col:"long, long ago|很久很久以前"},
+ {id:"no-longer", label:"no longer", pats:[["no","longer"]], zh:"不再", en:"not now, although it was true before", ex:"He no longer lives here.", exZh:"他已經不住這裡了。", col:"no longer + V|不再…;not… any longer|不再…"},
+ {id:"worth-ving", label:"be worth + Ving", pats:[["worth","thinking","about"]], zh:"值得做…", en:"good or useful enough to do", ex:"This movie is worth watching.", exZh:"這部電影值得一看。", col:"worth thinking about|值得思考;worth it|值得"},
+ {id:"years-later", label:"years later", pats:[["years","later"]], zh:"多年後", en:"many years after that time", ex:"Years later, they met again.", exZh:"多年後，他們再次相遇。", col:"two years later|兩年後"},
+ {id:"apologize-for", label:"apologize (to sb) for sth", pats:[["apologizes","for"]], zh:"為某事（向某人）道歉", en:"to say sorry for something", ex:"She apologized to me for breaking my pen.", exZh:"她為弄壞我的筆向我道歉。", col:"apologize for being late|為遲到道歉"},
+ {id:"rude-to", label:"be rude to sb", pats:[["rude","to"]], zh:"對某人無禮", en:"to be not polite to someone", ex:"Don't be rude to your classmates.", exZh:"不要對同學沒禮貌。", col:"be kind to sb|對某人友善"},
+ {id:"dont-worry", label:"Don't worry about it.", pats:[["don't","worry","about","it"]], zh:"別在意；沒關係。", en:"used to tell someone that something is not a problem", ex:"\"Sorry I'm late.\" \"Don't worry about it.\"", exZh:"「抱歉我遲到了。」「沒關係。」", col:"Don't worry.|別擔心。"}
+];
+
+/* 狄克生片語（Dixson, Essential Idioms in English）中相同或相似的用法；lesson = 原書課次 */
+const DIXON = {
+ "build-bridges":[
+   {p:"get along with", lesson:3, rel:"相似", zh:"和…相處融洽", ex:"I get along with my new classmates.", exZh:"我和新同學相處得很好。"},
+   {p:"make friends", lesson:6, rel:"相似", zh:"交朋友；和…變友好", ex:"It's easy to make friends at summer camp.", exZh:"在夏令營很容易交到朋友。"}],
+ "burn-bridges":[
+   {p:"break off", lesson:28, rel:"相似", zh:"斷絕（關係）；突然中止", ex:"She broke off her friendship with him after the fight.", exZh:"吵架後，她和他斷絕了友誼。"},
+   {p:"cut off", lesson:16, rel:"相似", zh:"切斷；中斷聯繫", ex:"He cut off all contact with his old team.", exZh:"他和舊團隊斷了所有聯繫。"}],
+ "water-under":[
+   {p:"be over", lesson:7, rel:"相似", zh:"結束了；過去了", ex:"The argument is over. Let's be friends again.", exZh:"爭吵已經結束了，我們和好吧。"},
+   {p:"never mind", lesson:2, rel:"相似", zh:"沒關係；別在意", ex:"Never mind. It's not important now.", exZh:"沒關係，那現在不重要了。"}],
+ "dont-worry":[
+   {p:"never mind", lesson:2, rel:"相似", zh:"沒關係；別在意", ex:"\"I broke your pencil.\" \"Never mind.\"", exZh:"「我弄斷你的鉛筆了。」「沒關係。」"}],
+ "come-from":[
+   {p:"come from", lesson:10, rel:"相同", zh:"來自；源自", ex:"Many English words come from Latin.", exZh:"很多英文字源自拉丁文。"}],
+ "place-to-place":[
+   {p:"get to", lesson:6, rel:"相似", zh:"到達（某地）", ex:"How do you get to school every day?", exZh:"你每天怎麼到學校？"}]
+};
+
+/* 重點單字：CEFR B1 以上（含 B1）。級別為參考分級，老師可在此調整 */
+const KEYWORDS = [
+ {w:"express", lv:"B1", si:1}, {w:"relationship", lv:"B1", si:3}, {w:"partner", lv:"B1", si:5},
+ {w:"undo", lv:"B2", si:6}, {w:"destroy", lv:"B1", si:6}, {w:"opportunity", lv:"B1", si:6},
+ {w:"burn", lv:"B1", si:6}, {w:"expression", lv:"B1", si:7}, {w:"army", lv:"B1", si:7},
+ {w:"enemy", lv:"B1", si:7}, {w:"worth", lv:"B1", si:9}, {w:"apologize", lv:"B1", si:11}, {w:"rude", lv:"B1", si:11}
+];
+const KWSET = new Set(KEYWORDS.map(k=>k.w));
+const KWLV = Object.fromEntries(KEYWORDS.map(k=>[k.w,k.lv]));
+
+/* 字面看不出意思的片語與搭配詞（字面陷阱）：pats 對應課文中的寫法 */
+const OPAQUE = [{"id": "build", "phrase": "build bridges", "type": "慣用語", "pats": [["building", "bridges"], ["build", "bridges"]], "lit": "蓋橋、造橋", "litEn": "to make a bridge", "real": "修補關係；拉近彼此的距離", "realEn": "to improve a relationship", "why": "看到 bridge 會以為在講工程，其實是在講人和人之間的關係。", "ex": "Our new class leader is trying to build bridges between the two groups.", "exZh": "新班長正努力拉近兩群同學之間的距離。", "dx": "get along with（第 3 課，相似）"}, {"id": "closer", "phrase": "get closer (with sb)", "type": "搭配詞", "pats": [["get", "closer"]], "lit": "移動得更靠近", "litEn": "to move nearer", "real": "變得更親近；感情變好", "realEn": "to become better friends", "why": "close 在這裡不是距離近，而是關係近。", "ex": "Playing games together helped us get closer.", "exZh": "一起玩遊戲讓我們變得更親近。"}, {"id": "another", "phrase": "one another", "type": "固定片語", "pats": [["one", "another"]], "lit": "一個、另一個", "litEn": "one + another", "real": "彼此；互相", "realEn": "each other", "why": "兩個字分開都懂，合起來是「互相」，不能逐字翻。", "ex": "The students help one another.", "exZh": "學生們互相幫忙。"}, {"id": "burn", "phrase": "burn your bridges", "type": "慣用語", "pats": [["burned", "their", "bridges"], ["burn", "your", "bridges"]], "lit": "把橋燒掉", "litEn": "to set a bridge on fire", "real": "自斷後路；把關係弄到無法挽回", "realEn": "to destroy a relationship or chance for good", "why": "不是真的放火，而是做了收不回來的事，讓自己再也回不去。", "ex": "Don't shout at your boss when you quit. You don't want to burn your bridges.", "exZh": "辭職時別對老闆大吼，你不會想斷了自己的後路。", "dx": "break off（第 28 課，相似）"}, {"id": "longer", "phrase": "no longer", "type": "固定片語", "pats": [["no", "longer"]], "lit": "沒有更長", "litEn": "not longer", "real": "不再", "realEn": "not any more", "why": "longer 在這裡不是「更長」，no longer 整組是「不再」。", "ex": "He no longer lives here.", "exZh": "他已經不住這裡了。"}, {"id": "water", "phrase": "water under the bridge", "type": "慣用語", "pats": [["water", "under", "the", "bridge"]], "lit": "橋下的水", "litEn": "water below a bridge", "real": "過去的事，已經不重要", "realEn": "something in the past that no longer matters", "why": "不是在描述河景，而是說「都過去了，別再提」。", "ex": "We had a fight last year, but it's water under the bridge now.", "exZh": "我們去年吵過架，但現在都過去了。", "dx": "be over（第 7 課，相似）"}];
+
+/* 堆疊練習：單字 → 搭配詞 → 片語 → 課文句子；[[ ]] 標出本層加上去的部分 */
+const LADDERS = [
+ {title:"express", rungs:[
+   ["單字","express","表達"],["搭配詞","express [[yourself]]","表達自己"],
+   ["片語","[[help us]] express ourselves","幫助我們表達自己"],
+   ["課文句子","Bridges don't just help us get from place to place, [[they can also]] help us express ourselves.","橋不只帶我們往來各地，也能幫助我們表達自己。"]]},
+ {title:"relationship", rungs:[
+   ["單字","relationship","關係"],["搭配詞","[[improve a]] relationship","改善關係"],
+   ["片語","improve their relationship [[with another group or person]]","改善和另一個團體或人的關係"],
+   ["課文句子","[[If someone is trying to]] improve their relationship with another group or person, [[they are \"building bridges.\"]]","如果有人正努力改善和別人的關係，就是在「搭橋」。"]]},
+ {title:"build bridges", rungs:[
+   ["單字","bridge","橋"],["搭配詞","[[build]] bridges","搭橋；修補關係"],
+   ["片語","build bridges [[with the neighbor]]","和鄰居修補關係"],
+   ["課文句子","[[We need to]] build bridges with the neighbor, [[let's invite him to dinner.]]","我們得跟鄰居改善關係，請他來吃晚餐吧。"]]},
+ {title:"destroy · opportunity", rungs:[
+   ["單字","destroy","破壞；摧毀"],["搭配詞","destroy [[a relationship]]","破壞關係"],
+   ["片語","destroys a relationship [[or an opportunity]]","毀掉一段關係或一個機會"],
+   ["課文句子","[[But if a person does something they can't undo, especially something that]] destroys a relationship or an opportunity, [[you can say they have \"burned their bridges.\"]]","如果有人做了無法挽回、毀掉關係或機會的事，就可以說他「自斷後路」。"]]},
+ {title:"burn your bridges", rungs:[
+   ["單字","burn","燒"],["搭配詞","burn [[bridges]]","燒橋"],
+   ["片語","[[there's no need to]] burn your bridges","沒必要自斷後路"],
+   ["課文句子","[[You could have just said 'no thanks' —]] there's no need to burn your bridges.","你說聲「不用了，謝謝」就好，沒必要把話說絕。"]]},
+ {title:"army · enemy", rungs:[
+   ["單字","enemy","敵人"],["搭配詞","[[stop the]] enemy","阻止敵人"],
+   ["片語","stop their enemy [[from crossing them]]","阻止敵人過橋"],
+   ["課文句子","[[The expression comes from war, when an army would burn bridges to]] stop their enemy from crossing them.","這個說法來自戰爭：軍隊會燒橋阻止敵人過河。"]]},
+ {title:"worth", rungs:[
+   ["單字","worth","值得的"],["搭配詞","worth [[thinking about]]","值得思考"],
+   ["片語","[[no longer important or]] worth thinking about","不再重要、不值得去想"],
+   ["課文句子","[[If something happened a long time ago and is]] no longer important or worth thinking about, [[you can say that it's \"water under the bridge.\"]]","如果某件事很久以前發生、已不重要，就可以說那是「過去的事」。"]]},
+ {title:"water under the bridge", rungs:[
+   ["單字","water","水"],["搭配詞","water [[under the bridge]]","過去的事"],
+   ["片語","[[it's all]] water under the bridge [[now]]","現在都過去了"],
+   ["課文句子","[[Don't worry about it,]] it's all water under the bridge now.","別在意，那些都過去了。"]]},
+ {title:"apologize · rude", rungs:[
+   ["單字","apologize","道歉"],["搭配詞","apologize [[for]]","為…道歉"],
+   ["片語","apologizes for [[being rude to you]]","為對你無禮而道歉"],
+   ["課文句子","[[So if, years later, your neighbor]] apologizes for being rude to you, [[you might say…]]","所以如果多年後，鄰居為曾對你無禮而道歉，你可能會說…"]]}
+];
+
+/* 超過 12 個字的句子拆成兩段跟讀：寫出第一段，剩下的就是第二段 */
+const SPLITS = {
+ 1:"Bridges don't just help us get from place to place,",
+ 3:"If someone is trying to improve their relationship with another group or person,",
+ 4:"This is because they're trying to make it easier for people",
+ 5:"So if your neighbor doesn't like you, you might say to your partner,",
+ 6:"But if a person does something they can't undo, especially something that destroys a relationship or an opportunity,",
+ 7:"The expression comes from war,",
+ 8:"So if you ask your neighbor to dinner and he tells you to never speak to him again, you could say,",
+ 9:"If something happened a long time ago and is no longer important or worth thinking about,",
+ 10:"Water in a river is always moving —",
+ 11:"So if, years later, your neighbor apologizes for being rude to you, you might say,"
+};
+
+/* ================= STATE ================= */
+const defState = () => ({name:"", active:0, full:0, sentPlays:0, lookups:{}, phraseLooks:{}, scores:{}, teacher:"", first:null});
+let ST = defState();
+try{
+  const raw = localStorage.getItem(UNIT_KEY);
+  if(raw) ST = Object.assign(defState(), JSON.parse(raw));
+  else { const old = localStorage.getItem(OLD_KEY); if(old){ const o=JSON.parse(old); ST = Object.assign(defState(), o, {scores:{}}); } } // 舊版跟讀分數是整句計分，不沿用
+}catch(e){}
+if(!ST.first) ST.first = new Date().toISOString();
+let saveT=null;
+function save(){ clearTimeout(saveT); saveT=setTimeout(()=>{ try{localStorage.setItem(UNIT_KEY, JSON.stringify(ST))}catch(e){} },300); }
+let lastAct = Date.now();
+['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{lastAct=Date.now()},{passive:true}));
+setInterval(()=>{ if(document.visibilityState==='visible' && Date.now()-lastAct<90000){ ST.active+=5; save(); } },5000);
+
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(t){ const d=document.createElement('div'); d.className='toast'; d.textContent=t; document.body.appendChild(d); setTimeout(()=>d.remove(),2600); }
+
+/* ================= TOKENS & PHRASES ================= */
+const WORD_RE = /\d[\d,]*s?|[A-Za-z]+(?:'[A-Za-z]+)?/g;
+function tokenize(text){ const out=[]; let m; WORD_RE.lastIndex=0; while((m=WORD_RE.exec(text))){ out.push({t:m[0], s:m.index, e:m.index+m[0].length}); } return out; }
+const TOK = SENT.map(s=>tokenize(s.en));
+const PHMAP = SENT.map((s,si)=>{
+  const low = TOK[si].map(t=>t.t.toLowerCase()); const map = low.map(()=>[]);
+  PHR.forEach(p=>p.pats.forEach(pat=>{
+    for(let i=0;i+pat.length<=low.length;i++){
+      if(pat.every((w,j)=>low[i+j]===w)){ for(let j=0;j<pat.length;j++) if(!map[i+j].includes(p.id)) map[i+j].push(p.id); }
+    }
+  }));
+  return map;
+});
+const PH = Object.fromEntries(PHR.map(p=>[p.id,p]));
+function lemmaOf(w){ const l=w.toLowerCase(); if(FORMS[l]) return FORMS[l][0]; return l; }
+function phraseSentence(id){ for(let i=1;i<SENT.length;i++){ if(PHMAP[i].some(a=>a.includes(id))) return i; } return 0; }
+
+/* ================= SPEECH ================= */
+const synth = window.speechSynthesis || null;
+let voices=[], voice=null, listenRate=0.9;
+const PREF = ["Google US English","Samantha","Microsoft Aria","Microsoft Jenny","Microsoft Guy","Alex","Ava","Allison"];
+function loadVoices(){
+  if(!synth) return;
+  voices = synth.getVoices().filter(v=>/^en[-_]/i.test(v.lang));
+  const sel=$('#voiceSel'); sel.innerHTML='';
+  if(!voices.length){ sel.innerHTML='<option>預設英文語音</option>'; return; }
+  let saved=null; try{saved=localStorage.getItem('oak-voice')}catch(e){}
+  voice = voices.find(v=>v.name===saved) || PREF.map(n=>voices.find(v=>v.name.includes(n))).find(Boolean) || voices.find(v=>/en[-_]US/i.test(v.lang)) || voices[0];
+  voices.forEach(v=>{ const o=document.createElement('option'); o.value=v.name; o.textContent=v.name.replace(/Microsoft |Google /,'')+' ('+v.lang+')'; if(v===voice) o.selected=true; sel.appendChild(o); });
+}
+if(synth){ loadVoices(); synth.onvoiceschanged = loadVoices; }
+$('#voiceSel').addEventListener('change',e=>{ voice=voices.find(v=>v.name===e.target.value)||voice; try{localStorage.setItem('oak-voice',voice.name)}catch(_){} });
+function speak(text, rate, h={}){
+  if(!synth){ toast('這個瀏覽器不支援語音播放，請改用 Chrome 或 Safari'); h.onend&&h.onend(); return; }
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance(text.replace(/—/g,','));
+  u.lang='en-US'; if(voice) u.voice=voice; u.rate=rate;
+  u.onstart=()=>h.onstart&&h.onstart();
+  u.onend=()=>h.onend&&h.onend();
+  u.onerror=()=>h.onend&&h.onend();
+  if(h.onboundary) u.onboundary=h.onboundary;
+  setTimeout(()=>synth.speak(u),40);
+}
+function stopSpeech(){ if(synth) synth.cancel(); }
+
+/* ================= LISTEN VIEW ================= */
+function sentHTML(si){
+  const s=SENT[si].en, toks=TOK[si], ph=PHMAP[si]; let html='', pos=0;
+  toks.forEach((tk,k)=>{
+    let gap = s.slice(pos,tk.s);
+    if(gap){ const prevMain = k>0 && ph[k-1].some(id=>PH[id].main && ph[k].includes(id)); html += prevMain ? `<span class="gap main">${esc(gap)}</span>` : esc(gap); }
+    const isMain = ph[k].some(id=>PH[id].main), isSub = !isMain && ph[k].length>0, isKw = si>0 && KWSET.has(lemmaOf(tk.t));
+    html += `<span class="w${isMain?' main':''}${isSub?' sub':''}${isKw?' kw':''}" tabindex="0" role="button" data-s="${si}" data-k="${k}">${esc(tk.t)}</span>`;
+    pos = tk.e;
+  });
+  html += esc(s.slice(pos));
+  return html;
+}
+/* ================= 字面陷阱 ================= */
+const OPMAP = SENT.map((s,si)=>{
+  const low = TOK[si].map(t=>t.t.toLowerCase()); const map = low.map(()=>[]);
+  OPAQUE.forEach(o=>o.pats.forEach(pat=>{ for(let i=0;i+pat.length<=low.length;i++){ if(pat.every((w,j)=>low[i+j]===w)){ for(let j=0;j<pat.length;j++) if(!map[i+j].includes(o.id)) map[i+j].push(o.id); } } }));
+  return map;
+});
+const OPQ = Object.fromEntries(OPAQUE.map(o=>[o.id,o]));
+function opSentence(o){ for(let i=1;i<SENT.length;i++){ if(OPMAP[i].some(a=>a.includes(o.id))) return i; } return 0; }
+function trapCard(o, inPanel, n){
+  const si = opSentence(o);
+  return `<div class="trapc">${inPanel?'<span class="tt">⚠ 字面陷阱</span>':(n?`<span class="num">${n} / ${OPAQUE.length}</span>`:'')}<span class="ty">${esc(o.type)}</span>
+    <h4>${esc(o.phrase)} ${sayBtn(o.phrase.replace(/\(.*?\)|（.*?）|\+ ?V(ing)?|sb|sth|…/g,' '))}</h4>
+    <div class="vs"><div class="lit"><b>✗ 字面意思</b><div class="v">${esc(o.lit)}</div><div class="e2">${esc(o.litEn)}</div></div>
+    <div class="real"><b>✓ 真正意思</b><div class="v">${esc(o.real)}</div><div class="e2">${esc(o.realEn)}</div></div></div>
+    <p class="why"><b>為什麼容易誤解：</b>${esc(o.why)}</p>
+    ${!inPanel && si?`<div class="lbl">課文句子</div><div class="ex"><div class="en">${esc(SENT[si].en)} ${sayBtn(SENT[si].en)}</div></div>`:''}
+    <div class="lbl">例句 Example</div><div class="ex"><div class="en">${esc(o.ex)} ${sayBtn(o.ex)}</div><div class="z">${esc(o.exZh)}</div></div>
+    ${o.dx?`<div class="dxn">【狄克生】${esc(o.dx)}</div>`:''}
+  </div>`;
+}
+function markTraps(){ document.querySelectorAll('#article .w').forEach(w=>{ const a=OPMAP[+w.dataset.s]; if(a && a[+w.dataset.k] && a[+w.dataset.k].length) w.classList.add('trap'); }); }
+function renderOpaque(){ const el=document.getElementById('opaque'); if(el) el.innerHTML = OPAQUE.map((o,i)=>trapCard(o,false,i+1)).join(''); }
+
+function renderArticle(){
+  let h = `<h2><span class="sent" data-s="0"><button class="sp" data-play="0" aria-label="播放標題">▶</button>${sentHTML(0)}</span><span class="zh">${esc(SENT[0].zh)}</span></h2>`;
+  PARAS.forEach(p=>{
+    h += '<p>' + p.map(si=>`<span class="sent" data-s="${si}"><button class="sp" data-play="${si}" aria-label="播放第${si}句">▶</button>${sentHTML(si)}</span> <span class="zh">${esc(SENT[si].zh)}</span>`).join('') + '</p>';
+  });
+  $('#article').innerHTML = h;
+}
+renderArticle(); markTraps();
+
+let playing=false, playIdx=0;
+function setPlayBtn(){ $('#playAll').innerHTML = playing ? '■ 停止播放' : '▶ 整篇播放'; }
+function clearSpeaking(){ document.querySelectorAll('.sent.speaking').forEach(e=>e.classList.remove('speaking')); document.querySelectorAll('.w.reading-now').forEach(e=>e.classList.remove('reading-now')); }
+function playSentence(si, cont){
+  clearSpeaking();
+  const el = document.querySelector(`.sent[data-s="${si}"]`); if(el){ el.classList.add('speaking'); if(cont) el.scrollIntoView({block:'center',behavior:'smooth'}); }
+  speak(SENT[si].en, listenRate, {
+    onboundary:(e)=>{ if(e.name && e.name!=='word') return; const k=TOK[si].findIndex(t=>e.charIndex>=t.s && e.charIndex<t.e+1); document.querySelectorAll('.w.reading-now').forEach(x=>x.classList.remove('reading-now')); if(k>=0){ const w=document.querySelector(`#article .w[data-s="${si}"][data-k="${k}"]`); w&&w.classList.add('reading-now'); } },
+    onend:()=>{ clearSpeaking(); if(cont && playing){ if(si<SENT.length-1){ playIdx=si+1; setTimeout(()=>{ if(playing) playSentence(playIdx,true); },350); } else { playing=false; setPlayBtn(); } } }
+  });
+}
+$('#playAll').addEventListener('click',()=>{
+  if(playing){ playing=false; stopSpeech(); clearSpeaking(); setPlayBtn(); return; }
+  playing=true; ST.full++; save(); setPlayBtn(); playSentence(0,true);
+});
+document.querySelectorAll('.seg [data-rate]').forEach(b=>b.addEventListener('click',()=>{
+  listenRate=parseFloat(b.dataset.rate); document.querySelectorAll('.seg [data-rate]').forEach(x=>x.setAttribute('aria-pressed', x===b)); }));
+$('#zhToggle').addEventListener('change',e=>$('#article').classList.toggle('show-zh',e.target.checked));
+$('#article').addEventListener('click',e=>{
+  const pb=e.target.closest('[data-play]');
+  if(pb){ playing=false; setPlayBtn(); ST.sentPlays++; save(); playSentence(+pb.dataset.play,false); return; }
+  const w=e.target.closest('.w'); if(w) openWord(+w.dataset.s,+w.dataset.k,w);
+});
+$('#article').addEventListener('keydown',e=>{ if((e.key==='Enter'||e.key===' ') && e.target.classList.contains('w')){ e.preventDefault(); openWord(+e.target.dataset.s,+e.target.dataset.k,e.target); } });
+
+/* ================= LOOKUP PANEL ================= */
+function colsHTML(str){ if(!str) return ''; return '<ul class="cols">'+str.split(';').map(c=>{const [a,b]=c.split('|'); return `<li><b>${esc(a)}</b><span>${esc(b||'')}</span></li>`}).join('')+'</ul>'; }
+function sayBtn(text,label='▶'){ return `<button class="say" data-say="${esc(text)}" aria-label="播放發音">${label}</button>`; }
+function phraseCard(p, si){
+  const s = si ?? phraseSentence(p.id);
+  return `<div class="phcard${p.main?'':' subc'}">
+    <h4>${esc(p.label)} ${sayBtn(p.label.replace(/\(.*?\)|sb|sth|\+ ?V(ing)?|p\.p\.|…/g,' '))}<span class="tag${p.main?'':' s'}">${p.main?'本課重點':'實用片語'}</span></h4>
+    <div class="zhm">${esc(p.zh)}</div><div class="enm">${esc(p.en)}</div>
+    ${p.origin?`<div class="origin"><b>由來：</b>${esc(p.origin)}</div>`:''}
+    <div class="lbl">例句 Example</div>
+    <div class="ex"><div class="en">${esc(p.ex)} ${sayBtn(p.ex)}</div><div class="z">${esc(p.exZh)}</div></div>
+    <div class="lbl">搭配用法 Collocations</div>${colsHTML(p.col)}
+    ${dixonHTML(p.id)}
+    ${s?`<div class="lbl">在本文中 In the text</div><div class="intext">第 ${s} 句：${esc(SENT[s].en)}</div>`:''}
+  </div>`;
+}
+function dixonHTML(id){
+  const list = DIXON[id]; if(!list) return '';
+  return `<div class="dixon"><div class="dh">狄克生片語對照</div>${list.map(d=>`<div class="di"><b>${esc(d.p)}</b> ${sayBtn(d.p)}<span class="rel ${d.rel==='相同'?'':'sim'}">${d.rel}・第 ${d.lesson} 課</span> ${esc(d.zh)}
+    <div class="dex">${esc(d.ex)} ${sayBtn(d.ex)}</div><div class="dz">${esc(d.exZh)}</div></div>`).join('')}</div>`;
+}
+function vocabChips(){
+  const keys=Object.keys(ST.lookups);
+  if(!keys.length) return '<p class="empty">還沒有查詢的字。</p>';
+  return '<div class="chips">'+keys.map(k=>`<button class="chip" data-lemma="${esc(k)}">${esc(k)}</button>`).join('')+'</div>';
+}
+function panelDefault(){
+  $('#panel').classList.remove('active'); $('#backdrop').classList.remove('on');
+  $('#panel').innerHTML = `<h3>單字・片語查詢</h3>
+   <p class="hint">點文章中的任何一個字，這裡會出現音標、中英文解釋、例句和搭配詞。黃色底線是本課重點片語，紅色虛線是字面看不出意思的說法。</p>
+   <div class="lbl">本課重點片語</div>
+   <div class="chips">${PHR.filter(p=>p.main).map(p=>`<button class="chip main" data-ph="${p.id}">${esc(p.label)}</button>`).join('')}</div>
+   <div class="lbl" style="margin-top:18px">我的生字本（${Object.keys(ST.lookups).length}）</div>${vocabChips()}`;
+}
+function wordCard(display, lemma, note){
+  const d = DICT[lemma];
+  if(!d) return `<div class="card"><div class="whead"><span class="word">${esc(display)}</span>${sayBtn(display)}</div><p class="hint">這個字的資料還在整理中。</p></div>`;
+  const [ipa,pos,zh,en,ex,exZh,col]=d;
+  return `<div class="card">
+    <div class="whead"><span class="word">${esc(lemma)}</span><span class="ipa">${esc(ipa)}</span>${sayBtn(lemma)}<span class="pos">${esc(pos)}</span>${KWLV[lemma]?`<span class="lvl ${KWLV[lemma]==='B2'?'b2':''}">${KWLV[lemma]} 重點單字</span>`:''}</div>
+    ${note?`<div class="note">本文：${esc(display)} → ${esc(note)}</div>`:''}
+    <div class="zhm">${esc(zh)}</div><div class="enm">${esc(en)}</div>
+    <div class="lbl">例句 Example</div>
+    <div class="ex"><div class="en">${esc(ex)} ${sayBtn(ex)}</div><div class="z">${esc(exZh)}</div></div>
+    ${col?`<div class="lbl">搭配詞 Collocations</div>${colsHTML(col)}`:''}
+  </div>`;
+}
+function showPanel(html){
+  const panel=$('#panel');
+  panel.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px"><button class="btn ghost" id="backBtn" style="min-height:36px;padding:6px 12px">← 查詢首頁</button><button class="btn ghost closebtn" id="closeBtn" style="min-height:36px;padding:6px 12px">關閉 ✕</button></div>` + html;
+  panel.classList.add('active'); $('#backdrop').classList.add('on'); panel.scrollTop=0;
+  if(innerWidth>=1000) panel.scrollIntoView({block:'nearest'});
+}
+function openWord(si,k,el){
+  document.querySelectorAll('.w.sel').forEach(x=>x.classList.remove('sel')); el&&el.classList.add('sel');
+  const display=TOK[si][k].t, low=display.toLowerCase(), lemma=lemmaOf(display), note=FORMS[low]?FORMS[low][1]:'';
+  ST.lookups[lemma]=(ST.lookups[lemma]||0)+1;
+  const phs = PHMAP[si][k].map(id=>PH[id]).sort((a,b)=>(b.main?1:0)-(a.main?1:0));
+  phs.forEach(p=>ST.phraseLooks[p.id]=(ST.phraseLooks[p.id]||0)+1); save();
+  showPanel(OPMAP[si][k].map(id=>trapCard(OPQ[id],true)).join('') + wordCard(display,lemma,note) + phs.map(p=>phraseCard(p,si)).join(''));
+}
+function openPhrase(id){ const p=PH[id]; ST.phraseLooks[id]=(ST.phraseLooks[id]||0)+1; save(); showPanel(phraseCard(p)); }
+function openLemma(l){ showPanel(wordCard(l,l,'')); }
+document.addEventListener('click',e=>{
+  const s=e.target.closest('[data-say]'); if(s){ speak(s.dataset.say, listenRate); return; }
+  const ph=e.target.closest('[data-ph]'); if(ph){ if(ph.closest('#tab-phrases')){ switchTab('listen'); } openPhrase(ph.dataset.ph); return; }
+  const lm=e.target.closest('[data-lemma]'); if(lm && lm.closest('#panel')){ openLemma(lm.dataset.lemma); return; }
+  if(e.target.id==='backBtn'){ document.querySelectorAll('.w.sel').forEach(x=>x.classList.remove('sel')); panelDefault(); return; }
+  if(e.target.id==='closeBtn' || e.target.id==='backdrop'){ document.querySelectorAll('.w.sel').forEach(x=>x.classList.remove('sel')); panelDefault(); }
+});
+panelDefault();
+
+/* ================= PHRASES VIEW ================= */
+function renderPhrases(){
+  $('#idioms').innerHTML = PHR.filter(p=>p.main).map((p,i)=>`<div class="idiom">
+    <div class="num">IDIOM ${i+1} / 3</div>
+    <h3>${esc(p.label)} ${sayBtn(p.label.replace(/\(.*?\)/g,''))}</h3>
+    <div class="zhm">${esc(p.zh)}</div><div class="enm">${esc(p.en)}</div>
+    <div class="origin"><b>由來：</b>${esc(p.origin)}</div>
+    <div class="lbl">課文句子</div><div class="ex"><div class="en">${esc(SENT[phraseSentence(p.id)].en)} ${sayBtn(SENT[phraseSentence(p.id)].en)}</div></div>
+    <div class="lbl">更多例句</div><div class="ex"><div class="en">${esc(p.ex)} ${sayBtn(p.ex)}</div><div class="z">${esc(p.exZh)}</div></div>
+    <div class="lbl">搭配用法</div>${colsHTML(p.col)}
+    ${dixonHTML(p.id)}
+  </div>`).join('');
+  $('#subphrases').innerHTML = PHR.filter(p=>!p.main).map(p=>`<button class="chip" data-ph="${p.id}">${esc(p.label)}${DIXON[p.id]?' ・狄克生':''}</button>`).join('');
+  $('#kwgrid').innerHTML = KEYWORDS.map(k=>{ const d=DICT[k.w]; if(!d) return '';
+    const firstCol = (d[6]||'').split(';')[0].split('|');
+    return `<button class="kwc" data-kw="${esc(k.w)}"><span class="top2"><span class="wd">${esc(k.w)}</span><span class="pos">${esc(d[1])}</span><span class="lvl ${k.lv==='B2'?'b2':''}">${k.lv}</span></span>
+      <span class="zz">${esc(d[2])}</span><span class="cc">${esc(firstCol[0]||'')}　${esc(firstCol[1]||'')}</span></button>`; }).join('');
+  renderLadders();
+}
+const ladStep = LADDERS.map(()=>0);
+function rungHTML(text){ return esc(text).replace(/\[\[(.+?)\]\]/g,'<mark>$1</mark>'); }
+function plain(text){ return text.replace(/\[\[|\]\]/g,''); }
+function renderLadders(){
+  $('#ladders').innerHTML = LADDERS.map((L,li)=>`<div class="ladder">
+    <header><b>${esc(L.title)}</b><span class="hint" style="margin:0">${ladStep[li]+1} / ${L.rungs.length} 層</span></header>
+    ${L.rungs.map((r,ri)=>`<div class="rung l${ri}" ${ri>ladStep[li]?'hidden':''}><span class="ty">${esc(r[0])}</span>
+      <div class="tx"><div class="en">${rungHTML(r[1])} ${sayBtn(plain(r[1]))}</div><div class="z">${esc(r[2])}</div></div></div>`).join('')}
+    <div class="lctl">${ladStep[li]<L.rungs.length-1?`<button class="btn" data-lad="${li}">加一層 ▸</button>`:`<button class="btn ghost" data-ladplay="${li}">▶ 從頭唸一次</button>`}${ladStep[li]>0?`<button class="btn ghost" data-ladback="${li}">↺ 重來</button>`:''}</div>
+  </div>`).join('');
+}
+function playLadder(li){
+  const rs = LADDERS[li].rungs.map(r=>plain(r[1])); let i=0;
+  const next=()=>{ if(i<rs.length){ speak(rs[i++], listenRate, {onend:()=>setTimeout(next,450)}); } };
+  next();
+}
+$('#tab-stack').addEventListener('click',e=>{
+  const a=e.target.closest('[data-lad]'); if(a){ const li=+a.dataset.lad; ladStep[li]=Math.min(LADDERS[li].rungs.length-1, ladStep[li]+1); renderLadders(); speak(plain(LADDERS[li].rungs[ladStep[li]][1]), listenRate); return; }
+  const b=e.target.closest('[data-ladback]'); if(b){ ladStep[+b.dataset.ladback]=0; renderLadders(); return; }
+  const c=e.target.closest('[data-ladplay]'); if(c){ playLadder(+c.dataset.ladplay); return; }
+  if(e.target.id==='ladAll'){ LADDERS.forEach((L,i)=>ladStep[i]=L.rungs.length-1); renderLadders(); }
+  if(e.target.id==='ladReset'){ ladStep.fill(0); renderLadders(); }
+});
+$('#tab-phrases').addEventListener('click',e=>{
+  const k=e.target.closest('[data-kw]'); if(k){ ST.lookups[k.dataset.kw]=(ST.lookups[k.dataset.kw]||0)+1; save(); switchTab('listen'); openLemma(k.dataset.kw); return; }
+});
+renderPhrases(); renderOpaque();
+
+/* ================= SHADOWING ================= */
+const MODES = [
+  {key:"S9",  name:"有稿跟讀", rate:0.9, step:"慢速", script:true},
+  {key:"B9",  name:"無稿跟讀", rate:0.9, step:"慢速", script:false},
+  {key:"S10", name:"有稿跟讀", rate:1.0, step:"正常速", script:true},
+  {key:"B10", name:"無稿跟讀", rate:1.0, step:"正常速", script:false}
+];
+/* 每一段：先有稿跟讀，接著馬上做同一段的無稿跟讀。速度由學生自選 0.9× 或 1.0×，選一種做完即可 */
+const ROUNDS = [{rate:0.9, name:"慢速（選一種即可）"},{rate:1.0, name:"正常速度（選一種即可）"}];
+function modeOf(rate, script){ return MODES.find(m=>m.rate===rate && m.script===script); }
+/* 練習單位：12 字以內的句子一句一段；超過 12 字拆成兩段 */
+const ITEMS = [];
+for(let si=1; si<SENT.length; si++){
+  const s = SENT[si].en, cut = SPLITS[si];
+  if(cut && s.startsWith(cut)){
+    ITEMS.push({si, part:1, label:`${si}-1`, en:cut.replace(/\s*[—]\s*$/,'').trim()});
+    ITEMS.push({si, part:2, label:`${si}-2`, en:s.slice(cut.length).trim()});
+  } else ITEMS.push({si, part:0, label:String(si), en:s});
+}
+ITEMS.forEach(it=>it.tok = tokenize(it.en));
+const SH_IDX = ITEMS.map((_,i)=>i);
+let mode=MODES[0], cur=0, autoRec=true, hintLvl=0, showZhS=false, lastResult=null;
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+let micProblem = SR ? '' : 'nosr';   // '' | 'nosr' | 'denied' | 'nomic'
+let recState=null;
+const myAudio = {};
+
+function sc(m,i){ return (ST.scores[m]||{})[i]; }
+function modeStats(m){ const o=ST.scores[m]||{}; const v=SH_IDX.map(i=>o[i]).filter(Boolean); const avg=v.length?Math.round(v.reduce((a,b)=>a+b.best,0)/v.length):0; return {done:v.length, avg}; }
+function grade(n){ return n>=85?'g':n>=65?'y':'r'; }
+function itemName(i){ const it=ITEMS[i]; return it.part ? `第 ${it.si} 句・第 ${it.part} 段` : `第 ${it.si} 句`; }
+
+function renderModes(){
+  const n=ITEMS.length;
+  $('#modes').innerHTML = ROUNDS.map(R=>{ const sS=modeStats(modeOf(R.rate,true).key), sB=modeStats(modeOf(R.rate,false).key);
+    return `<button class="mode" data-round="${R.rate}" aria-pressed="${mode.rate===R.rate}">
+    <span class="mstep">${R.name}</span><span class="mname">每段：有稿 → 無稿</span><span class="mrate">${R.rate.toFixed(1)}×</span>
+    <span class="mstat">有稿 ${sS.done}/${n}${sS.done?`・${sS.avg}%`:''}　無稿 ${sB.done}/${n}${sB.done?`・${sB.avg}%`:''}</span><span class="meter"><i style="width:${(sS.done+sB.done)/(2*n)*100}%"></i></span></button>`; }).join('');
+}
+function renderDots(){
+  const kS=modeOf(mode.rate,true).key, kB=modeOf(mode.rate,false).key;
+  $('#dots').innerHTML = SH_IDX.map(i=>{ const a=sc(kS,i), b=sc(kB,i); const cls = b ? grade(b.best) : a ? 'part' : '';
+    return `<button class="dot ${cls} ${i===cur?'cur':''}" data-dot="${i}" aria-label="${itemName(i)}${a?'，有稿 '+a.best+'%':''}${b?'，無稿 '+b.best+'%':''}">${ITEMS[i].label}</button>`; }).join('');
+}
+function maskWord(w,lvl){ if(lvl>=2) return esc(w); if(lvl===1) return esc(w[0])+'<i>'+'_'.repeat(Math.max(1,w.length-1))+'</i>'; return '<i>'+'_'.repeat(Math.min(w.length,6))+'</i>'; }
+function targetHTML(){
+  const toks=ITEMS[cur].tok;
+  if(lastResult) return toks.map((t,k)=>`<span class="t ${lastResult.marks[k]?'ok':'miss'}">${esc(t.t)}</span>`).join('');
+  if(mode.script) return toks.map(t=>`<span class="t">${esc(t.t)}</span>`).join('');
+  return toks.map(t=>`<span class="blank">${maskWord(t.t,hintLvl)}</span>`).join('');
+}
+function micNotice(){
+  if(micProblem==='nosr') return `<div class="notice">這個瀏覽器不支援語音辨識，無法評分。請改用 <b>Chrome</b>（電腦、Android）或 <b>Safari</b>（iPhone、iPad）開啟老師給的網址。</div>`;
+  if(micProblem==='denied') return `<div class="notice">無法使用麥克風，所以不能做語音辨識。<br>・如果是在 Claude 頁面裡開啟：這裡不允許使用麥克風，請改用老師提供的橡木美語網站網址。<br>・如果已經在網站上：請在瀏覽器網址列旁允許「麥克風」，再按「● 開始跟讀」。</div>`;
+  if(micProblem==='nomic') return `<div class="notice">找不到麥克風。請確認裝置有麥克風（或耳機麥克風）後再試。</div>`;
+  return '';
+}
+function nameGateHTML(){
+  return `<div class="namegate"><h2>開始跟讀前，請先輸入姓名</h2>
+    <p class="hint" style="margin:0">姓名會顯示在學習報告上，老師才知道是誰的練習。<button class="linkbtn" data-help="shadow">第一次練習？看使用說明</button></p>
+    <input id="gateName" maxlength="20" placeholder="例如：王小明" value="${esc(ST.name)}" autocomplete="name">
+    <button class="btn" id="gateGo" style="width:100%;justify-content:center">開始練習 →</button></div>`;
+}
+function renderStage(){
+  const it=ITEMS[cur], r=sc(mode.key,cur), canRec=!micProblem || micProblem==='denied';
+  $('#stage').innerHTML = `
+   <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center">
+     <span class="count">${itemName(cur)}${it.part?`<span class="segtag">長句拆兩段</span>`:''}・${mode.name} ${mode.rate.toFixed(1)}×</span>
+     <span class="count">${r?`最佳 ${r.best}%・練習 ${r.n} 次`:'尚未練習'}</span>
+   </div>
+   <div class="steps2"><span class="${mode.script?'on':(sc(modeOf(mode.rate,true).key,cur)?'done':'')}">① 有稿跟讀</span><span class="arr">→</span><span class="${mode.script?'':'on'}">② 無稿跟讀</span></div>
+   <div class="target" id="target">${targetHTML()}</div>
+   ${(mode.script && showZhS) || lastResult ? `<div class="szh">${it.part?'整句：':''}${esc(SENT[it.si].zh)}</div>`:''}
+   <div class="controls">
+     <button class="btn ghost" id="sListen">▶ 聽示範</button>
+     ${canRec?`<button class="btn rec" id="sRec">● 開始跟讀</button>`:''}
+     ${myAudio[mode.key+'-'+cur]?`<button class="btn ghost" id="sMine">▶ 我的錄音</button>`:''}
+     ${mode.script?`<label class="switch"><input type="checkbox" id="sZh" ${showZhS?'checked':''}> 看中文</label>`:`<button class="btn honey" id="sHint" ${hintLvl>=2||lastResult?'disabled':''}>💡 提示${hintLvl===0?'（首字母）':hintLvl===1?'（看全文）':''}</button>`}
+     ${canRec?`<label class="switch"><input type="checkbox" id="sAuto" ${autoRec?'checked':''}> 聽完自動錄音</label>`:''}
+   </div>
+   <div class="timer" id="sTimer" hidden><i></i></div>
+   <div class="heard" id="sHeard"></div>
+   <div id="sResult">${resultHTML()}</div>
+   ${micNotice()}
+   <div class="controls" style="margin-top:16px;justify-content:space-between">
+     <button class="btn ghost" id="sPrev" ${cur===0&&mode.script?'disabled':''}>${mode.script?'← 上一段':'← 回到有稿跟讀'}</button>
+     <button class="btn" id="sNext">${nextLabel()}</button>
+   </div>`;
+}
+function nextLabel(){
+  if(mode.script) return '下一步：同一段無稿跟讀 →';
+  if(cur<ITEMS.length-1) return '下一段 →';
+  return '完成，看報告 →';
+}
+function resultHTML(){
+  if(!lastResult) return '';
+  const s=lastResult.score, msg = s>=90?'太棒了！Excellent!':s>=75?'很好！Great job!':s>=60?'不錯，再一次會更好':'再聽一次示範，慢慢唸';
+  return `<div class="result"><div class="score" style="color:var(--${grade(s)==='g'?'good':grade(s)==='y'?'warn':'bad'})">${s}<small>%</small></div>
+    <div><div class="msg">${msg}</div><div class="hint" style="margin:0">語音辨識正確率・綠色＝唸對，紅色＝漏唸或唸錯</div></div>
+    <button class="btn ghost" id="sRetry">↻ 再試一次</button></div>`;
+}
+function renderShadow(){
+  const gated = !ST.name.trim();
+  $('#modes').hidden = gated; $('#dots').hidden = gated; $('#nameBar').hidden = gated;
+  if(gated){ $('#stage').innerHTML = nameGateHTML(); setTimeout(()=>{ const i=$('#gateName'); i&&i.focus(); },50); return; }
+  renderModes(); renderDots(); renderStage();
+  const nb=$('#nameBar'); if(nb) nb.innerHTML = `練習者：<b>${esc(ST.name)}</b><button class="linkbtn" id="nameEdit">修改姓名</button><span>・速度選 0.9× 或 1.0× 其中一種練完即可</span><button class="linkbtn" data-help="shadow">❓ 使用說明</button>`;
+}
+
+const HOMO={two:'to',too:'to',four:'for',neighbour:'neighbor',neighbours:'neighbors',u:'you',ok:'okay',apologise:'apologize',apologises:'apologizes'};
+function norm(w){ w=w.toLowerCase().replace(/[’']/g,''); return HOMO[w]||w; }
+function scoreIt(heard){
+  const all=ITEMS[cur].tok.map(t=>t.t), idx=all.map((t,k)=>k).filter(k=>!/^\d/.test(all[k]));
+  const tgt=idx.map(k=>norm(all[k])), hw=(heard.match(/[A-Za-z’']+/g)||[]).map(norm);
+  const n=tgt.length, m=hw.length, dp=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+  for(let i=1;i<=n;i++) for(let j=1;j<=m;j++) dp[i][j]= tgt[i-1]===hw[j-1] ? dp[i-1][j-1]+1 : Math.max(dp[i-1][j],dp[i][j-1]);
+  const mk=new Array(n).fill(false); let i=n,j=m;
+  while(i>0&&j>0){ if(tgt[i-1]===hw[j-1]){mk[i-1]=true;i--;j--;} else if(dp[i-1][j]>=dp[i][j-1]) i--; else j--; }
+  const marks=all.map(()=>true); idx.forEach((k,q)=>marks[k]=mk[q]);
+  return {marks, score: Math.round(mk.filter(Boolean).length/n*100)};
+}
+function record(score, marks, heard){
+  const o = ST.scores[mode.key] = ST.scores[mode.key]||{};
+  const r = o[cur] = o[cur]||{best:-1,last:0,n:0,hint:0,miss:[],first:0};
+  if(r.n===0) r.first=score;
+  const missed = ITEMS[cur].tok.filter((t,k)=>!marks[k]).map(t=>t.t);
+  if(score>r.best){ r.best=score; r.miss=missed; r.hint=hintLvl; r.heard=heard.slice(0,200); }
+  r.last=score; r.n++; save();
+  lastResult={score,marks};
+  renderModes(); renderDots(); renderStage();
+}
+function listenModel(then){ speak(ITEMS[cur].en, mode.rate, {onend:()=>{ if(then) then(); }}); }
+async function startRec(){
+  if(recState || !SR) return;
+  lastResult=null; renderStage();
+  const heardEl=$('#sHeard'), btn=$('#sRec'); btn.classList.add('on'); btn.textContent='■ 完成';
+  const words=ITEMS[cur].tok.length, limit=Math.ceil(words*0.65/mode.rate+3);
+  const st = recState = {heard:'', chunks:[], gotErr:null, item:cur};
+  const tm=$('#sTimer'); tm.hidden=false; const bar=tm.querySelector('i'); bar.style.transition='none'; bar.style.width='0';
+  requestAnimationFrame(()=>{ bar.style.transition=`width ${limit}s linear`; bar.style.width='100%'; });
+  st.timer=setTimeout(()=>stopRec(),limit*1000);
+  heardEl.textContent='請開始唸…';
+  try{
+    if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder){
+      st.stream = await navigator.mediaDevices.getUserMedia({audio:true});
+      st.mr = new MediaRecorder(st.stream); st.mr.ondataavailable=e=>e.data.size&&st.chunks.push(e.data);
+      st.mr.onstop=()=>{ if(st.chunks.length){ myAudio[mode.key+'-'+st.item]=URL.createObjectURL(new Blob(st.chunks,{type:st.mr.mimeType||'audio/webm'})); } st.stream.getTracks().forEach(t=>t.stop()); };
+      st.mr.start();
+    }
+  }catch(e){ st.gotErr = (e && e.name==='NotFoundError') ? 'nomic' : 'not-allowed'; }
+  if(st.gotErr){ finishRec(); return; }
+  try{
+    const rec = st.rec = new SR(); rec.lang='en-US'; rec.interimResults=true; rec.continuous=true;
+    rec.onresult=e=>{ let fin='',int=''; for(let i=0;i<e.results.length;i++){ (e.results[i].isFinal?(fin+=e.results[i][0].transcript+' '):(int+=e.results[i][0].transcript+' ')); } st.heard=(fin+int).trim(); heardEl.textContent='辨識中：'+st.heard; };
+    rec.onerror=e=>{ st.gotErr=e.error; };
+    rec.onend=()=>{ if(recState===st && !st.stopping && !st.gotErr){ try{rec.start()}catch(_){ finishRec(); } } else finishRec(); };
+    rec.start();
+  }catch(e){ st.gotErr='sr'; finishRec(); }
+}
+function stopRec(){
+  const st=recState; if(!st) return; st.stopping=true; clearTimeout(st.timer);
+  try{ st.mr && st.mr.state!=='inactive' && st.mr.stop(); }catch(_){}
+  if(st.rec){ try{st.rec.stop()}catch(_){ finishRec(); } setTimeout(()=>{ if(recState===st) finishRec(); },2500); }
+  else finishRec();
+}
+function finishRec(){
+  const st=recState; if(!st) return; recState=null; clearTimeout(st.timer);
+  try{ st.mr && st.mr.state!=='inactive' && st.mr.stop(); }catch(_){}
+  try{ st.rec && st.rec.abort(); }catch(_){}
+  const e=st.gotErr;
+  if(e==='not-allowed'||e==='service-not-allowed'){ micProblem='denied'; renderStage(); return; }
+  if(e==='nomic'||e==='audio-capture'){ micProblem='nomic'; renderStage(); return; }
+  if(!st.heard){ renderStage(); $('#sHeard').textContent = e==='network' ? '語音辨識需要網路連線，請檢查網路後再試。' : '沒有聽到聲音，請靠近麥克風、大聲一點再試一次。'; return; }
+  micProblem='';
+  const r=scoreIt(st.heard); record(r.score, r.marks, st.heard); $('#sHeard').textContent='系統聽到：'+st.heard;
+}
+
+$('#tab-shadow').addEventListener('click',e=>{
+  const id=e.target.id;
+  if(id==='gateGo'){ const v=($('#gateName').value||'').trim(); if(!v){ toast('請先輸入姓名'); $('#gateName').focus(); return; } ST.name=v; save(); renderShadow(); return; }
+  if(id==='nameEdit'){ ST.name=''; save(); renderShadow(); return; }
+  const rb=e.target.closest('[data-round]'); if(rb){ mode=modeOf(+rb.dataset.round,true); hintLvl=0; lastResult=null; renderShadow(); return; }
+  const db=e.target.closest('[data-dot]'); if(db){ cur=+db.dataset.dot; mode=modeOf(mode.rate,true); hintLvl=0; lastResult=null; renderShadow(); return; }
+  if(id==='sListen'){ listenModel(()=>{ if(autoRec && SR && micProblem!=='nomic' && document.getElementById('sRec')) startRec(); }); }
+  else if(id==='sRec'){ if(recState) stopRec(); else { stopSpeech(); startRec(); } }
+  else if(id==='sMine'){ const a=new Audio(myAudio[mode.key+'-'+cur]); a.play().catch(()=>toast('無法播放錄音')); }
+  else if(id==='sHint'){ hintLvl=Math.min(2,hintLvl+1); renderStage(); }
+  else if(id==='sRetry'){ lastResult=null; renderStage(); }
+  else if(id==='sPrev'){
+    if(!mode.script){ mode=modeOf(mode.rate,true); }
+    else if(cur>0){ cur--; mode=modeOf(mode.rate,false); } else return;
+    hintLvl=0; lastResult=null; renderShadow(); }
+  else if(id==='sNext'){
+    if(mode.script){ mode=modeOf(mode.rate,false); }
+    else if(cur<ITEMS.length-1){ cur++; mode=modeOf(mode.rate,true); }
+    else { switchTab('report'); return; }
+    hintLvl=0; lastResult=null; renderShadow(); scrollTo({top:0,behavior:'smooth'}); }
+});
+$('#tab-shadow').addEventListener('keydown',e=>{ if(e.target.id==='gateName' && e.key==='Enter'){ e.preventDefault(); $('#gateGo').click(); } });
+$('#tab-shadow').addEventListener('change',e=>{ if(e.target.id==='sAuto') autoRec=e.target.checked; if(e.target.id==='sZh'){ showZhS=e.target.checked; renderStage(); } });
+
+/* ================= REPORT ================= */
+function fmtMin(s){ const m=Math.round(s/60); return m<1?'< 1':String(m); }
+function today(){ const d=new Date(); return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`; }
+function cellsDone(){ let n=0; MODES.forEach(m=>SH_IDX.forEach(i=>{ if(sc(m.key,i)) n++; })); return n; }
+function overview(){
+  /* 速度擇一：每段的有稿、無稿各算一格，0.9× 或 1.0× 任一速度完成就算完成，取較好的分數 */
+  let done=0, sum=0, att=0; const total=ITEMS.length*2;
+  SH_IDX.forEach(i=>[true,false].forEach(scr=>{ const cs=[0.9,1.0].map(r=>sc(modeOf(r,scr).key,i)).filter(Boolean);
+    if(cs.length){ done++; sum+=Math.max(...cs.map(c=>c.best)); att+=cs.reduce((a,c)=>a+c.n,0); } }));
+  return {done,total,rate:Math.round(done/total*100), acc: done?Math.round(sum/done):0, att};
+}
+function itemQuality(i){
+  const cells = MODES.map(m=>sc(m.key,i)||null), got = cells.filter(Boolean);
+  const avg = got.length ? Math.round(got.reduce((a,b)=>a+b.best,0)/got.length) : null;
+  const n = got.reduce((a,b)=>a+b.n,0);
+  const missSet = []; [...cells].reverse().forEach(c=>{ if(c) c.miss.forEach(w=>{ if(!missSet.includes(w)) missSet.push(w); }); });
+  return {cells, avg, n, miss:missSet};
+}
+function weakList(){
+  return SH_IDX.map(i=>({i, ...itemQuality(i)})).filter(x=>x.avg!==null && x.avg<80).sort((a,b)=>a.avg-b.avg).slice(0,5);
+}
+function idiomStatus(p){
+  const si=phraseSentence(p.id), its=SH_IDX.filter(i=>ITEMS[i].si===si);
+  const best=(keys)=>Math.max(0,...its.flatMap(i=>keys.map(k=>sc(k,i)?.best||0)));
+  const withS=best(['S9','S10']), blind=best(['B9','B10']), looked=!!ST.phraseLooks[p.id];
+  const st = blind>=80 ? ['g','已掌握'] : (withS||blind||looked) ? ['y','練習中'] : ['n','未開始'];
+  return {si,withS,blind,looked,st};
+}
+function qCell(c, blind){
+  if(!c) return `<td class="q" style="color:var(--muted)">—</td>`;
+  return `<td class="q ${grade(c.best)}">${c.best}%${blind&&c.hint?'<span class="hintmk">用了提示</span>':''}<span class="hintmk">${c.n} 次</span></td>`;
+}
+function renderReport(){
+  const vocab=Object.entries(ST.lookups).sort((a,b)=>b[1]-a[1]);
+  const weak=weakList(), ov=overview();
+  const canPrint = window.self===window.top;
+  $('#report').innerHTML = `
+  <div class="rcard">
+    <div class="rhead">
+      <div class="field"><label>學生姓名</label><div style="padding:6px 0;font-weight:700;font-size:22px">${ST.name?esc(ST.name):'<span class="empty" style="font-size:15px">尚未輸入（請到「④ 跟讀練習」輸入）</span>'}</div></div>
+      <div class="field"><label>日期</label><div style="padding:6px 0;font-weight:700;font-size:18px">${today()}</div></div>
+      <div class="field" style="flex:1;min-width:200px"><label>單元</label><div style="padding:6px 0;font-family:var(--f-read);font-weight:600">${esc(UNIT_TITLE)}</div></div>
+    </div>
+  </div>
+  <div class="tiles">
+    <div class="tile"><b>${ov.rate}%</b><span>跟讀完成率（${ov.done}/${ov.total}）</span></div>
+    <div class="tile"><b>${ov.done?ov.acc+'%':'—'}</b><span>整體跟讀正確率</span></div>
+    <div class="tile"><b>${ov.att}</b><span>跟讀總次數</span></div>
+    <div class="tile"><b>${fmtMin(ST.active)}</b><span>學習時間（分鐘）</span></div>
+  </div>
+  <div class="rcard"><h3>各速度跟讀表現</h3><div class="tbl"><table>
+    <thead><tr><th>步驟</th><th>語速</th><th>完成段數</th><th>平均正確率</th><th style="width:30%">表現</th></tr></thead><tbody>
+    ${MODES.map(m=>{const s=modeStats(m.key); return `<tr><td>${m.step}・${m.name}</td><td>${m.rate.toFixed(1)}×</td><td>${s.done} / ${ITEMS.length}</td><td>${s.done?s.avg+'%':'—'}</td><td><div class="hbar"><i style="width:${s.avg}%;background:var(--${s.done?(grade(s.avg)==='g'?'good':grade(s.avg)==='y'?'warn':'bad'):'line'})"></i></div></td></tr>`}).join('')}
+    </tbody></table></div></div>
+  <div class="rcard quality"><h3>逐段跟讀品質</h3>
+    <p class="hint">數字＝語音辨識正確率（最佳一次），下面是練習次數。紅字是最佳一次仍唸錯或漏唸的字。</p>
+    <div class="tbl"><table style="min-width:620px">
+    <thead><tr><th>句段</th>${MODES.map(m=>`<th style="text-align:center">${m.name}<br>${m.rate.toFixed(1)}×</th>`).join('')}<th>唸錯或漏唸的字</th></tr></thead><tbody>
+    ${SH_IDX.map(i=>{ const q=itemQuality(i); return `<tr><td style="font-weight:700;white-space:nowrap">${ITEMS[i].label}</td>${q.cells.map((c,k)=>qCell(c,!MODES[k].script)).join('')}<td class="miss">${q.miss.length?esc(q.miss.join(', ')):(q.avg===null?'':'<span style="color:var(--good)">全部唸對</span>')}</td></tr>`; }).join('')}
+    </tbody></table></div></div>
+  <div class="rcard"><h3>需要加強的句段</h3>
+    ${weak.length?`<ol class="weak">${weak.map(w=>`<li>${ITEMS[w.i].label}（平均 ${w.avg}%）：${esc(ITEMS[w.i].en)}${w.miss.length?`<div class="miss" style="color:var(--bad);font-size:14px">唸錯／漏唸：${esc(w.miss.join(', '))}</div>`:''}</li>`).join('')}</ol>`:'<p class="empty">目前沒有低於 80% 的句段，或還沒有開始跟讀。</p>'}
+  </div>
+  <div class="rcard"><h3>片語掌握</h3><div class="tbl"><table>
+    <thead><tr><th>片語</th><th>查詢過</th><th>有稿最佳</th><th>無稿最佳</th><th>狀態</th></tr></thead><tbody>
+    ${PHR.filter(p=>p.main).map(p=>{const s=idiomStatus(p); return `<tr><td style="font-family:var(--f-read);font-weight:600">${esc(p.label)}<div class="hint" style="margin:0;font-weight:400">${esc(p.zh)}</div></td><td>${s.looked?'✓':'—'}</td><td>${s.withS?s.withS+'%':'—'}</td><td>${s.blind?s.blind+'%':'—'}</td><td><span class="pill ${s.st[0]}">${s.st[1]}</span></td></tr>`}).join('')}
+    </tbody></table></div><p class="hint" style="margin:8px 0 0">「已掌握」＝含該片語的句段，無稿跟讀達 80% 以上。</p></div>
+  <div class="rcard"><h3>我的生字本</h3>
+    ${vocab.length?`<div class="vocab">${vocab.map(([w,n])=>`<div class="vitem"><div><b>${esc(w)}</b> <span>${esc(DICT[w]?DICT[w][2]:'')}</span></div><div style="display:flex;align-items:center;gap:4px"><span>×${n}</span>${sayBtn(w)}</div></div>`).join('')}</div>`:'<p class="empty">在「聆聽與閱讀」點單字，查過的字會出現在這裡。</p>'}
+  </div>
+  <div class="rcard"><h3>老師評語</h3><textarea id="teacherNote" placeholder="課堂表現、發音提醒、下次練習重點…">${esc(ST.teacher)}</textarea></div>
+  <div class="actions noprint">
+    <button class="btn" id="pngRep">🖼 下載學習報告（PNG 圖片）</button>
+    <button class="btn ghost" id="copyRep">📋 複製文字</button>
+    <button class="btn ghost" data-help="report">❓ 怎麼傳報告</button>
+    <span id="resetArea"><button class="btn ghost" id="resetBtn">清除所有紀錄</button></span>
+  </div>
+  <div class="pngwrap noprint" id="pngWrap"></div>`;
+}
+function reportText(){
+  const ov=overview();
+  const lines=[`【橡木美語 閱讀跟讀學習報告】`,`學生：${ST.name||'（未填）'}　日期：${today()}`,`單元：${UNIT_TITLE}`,
+    `跟讀完成率 ${ov.rate}%｜整體正確率 ${ov.done?ov.acc+'%':'—'}｜跟讀 ${ov.att} 次｜學習 ${fmtMin(ST.active)} 分鐘`,``,`▍各速度跟讀`];
+  MODES.forEach(m=>{const s=modeStats(m.key); lines.push(`・${m.name} ${m.rate.toFixed(1)}×：${s.done}/${ITEMS.length} 段${s.done?`，平均 ${s.avg}%`:''}`);});
+  const weak=weakList(); if(weak.length){ lines.push('','▍需要加強'); weak.forEach(w=>lines.push(`・${ITEMS[w.i].label}（${w.avg}%）${ITEMS[w.i].en}${w.miss.length?`　唸錯／漏唸：${w.miss.join(', ')}`:''}`)); }
+  lines.push('','▍片語掌握'); PHR.filter(p=>p.main).forEach(p=>{const s=idiomStatus(p); lines.push(`・${p.label}（${p.zh}）：${s.st[1]}`);});
+  if(ST.teacher.trim()) lines.push('','▍老師評語',ST.teacher.trim());
+  return lines.join('\n');
+}
+
+/* ---------- PNG 報告 ---------- */
+let dlNS = null;
+try{ if(window.claude && typeof window.claude.use==='function') window.claude.use('downloads').then(x=>{ dlNS=x; }).catch(()=>{}); }catch(e){}
+const PC = {bg:'#F1F4EC', card:'#FFFFFF', ink:'#1D2A22', muted:'#5A6A60', pine:'#24553F', oak:'#8A5A33', honey:'#E9B23C', line:'#D3DBCC', good:'#2B8752', warn:'#B9801A', bad:'#C0443B', soft2:'#E6ECE0'};
+const FZH = '"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif', FEN = '"Lexend","Noto Sans TC",sans-serif';
+function gcol(n){ return n>=85?PC.good:n>=65?PC.warn:PC.bad; }
+function wrapLines(ctx, text, maxW){
+  const out=[]; let line='';
+  const parts = text.match(/[A-Za-z0-9'’,.!?;:"—\-()]+\s*|[^A-Za-z0-9'’,.!?;:"—\-()]/g) || [];
+  parts.forEach(p=>{ const t=line+p; if(ctx.measureText(t.trimEnd()).width>maxW && line){ out.push(line.trimEnd()); line=p.trimStart(); } else line=t; });
+  if(line.trim()) out.push(line.trimEnd());
+  return out;
+}
+function rrect(ctx,x,y,w,h,r,fill,stroke){ ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x,y,w,h,r) : ctx.rect(x,y,w,h); if(fill){ctx.fillStyle=fill;ctx.fill();} if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke();} }
+function drawReport(ctx, W){
+  const P=50, IW=W-P*2; let y=0; const ov=overview();
+  // header band
+  ctx.fillStyle=PC.pine; ctx.fillRect(0,0,W,150);
+  ctx.fillStyle='#fff'; ctx.font=`700 26px ${FZH}`; ctx.textBaseline='alphabetic';
+  ctx.fillText('橡木美語 Oak English', P, 58);
+  ctx.font=`700 40px ${FZH}`; ctx.fillText('閱讀跟讀學習報告', P, 112);
+  ctx.textAlign='right'; ctx.font=`600 26px ${FEN}`; ctx.fillText(UNIT_SHORT, W-P, 112); ctx.textAlign='left';
+  y=150+30;
+  // name card
+  rrect(ctx,P,y,IW,130,18,PC.card,PC.line);
+  ctx.fillStyle=PC.muted; ctx.font=`500 22px ${FZH}`; ctx.fillText('學生姓名', P+28, y+42); ctx.fillText('日期', P+IW-260, y+42);
+  ctx.fillStyle=PC.ink; ctx.font=`700 44px ${FZH}`; ctx.fillText(ST.name||'（未填）', P+28, y+100);
+  ctx.font=`700 32px ${FEN}`; ctx.fillText(today(), P+IW-260, y+98);
+  y+=130+24;
+  // tiles
+  const tiles=[[`${ov.rate}%`,`完成率 ${ov.done}/${ov.total}`],[ov.done?`${ov.acc}%`:'—','整體正確率'],[String(ov.att),'跟讀總次數'],[fmtMin(ST.active),'學習分鐘']];
+  const tw=(IW-3*16)/4;
+  tiles.forEach((t,k)=>{ const x=P+k*(tw+16); rrect(ctx,x,y,tw,120,16,PC.soft2); ctx.fillStyle=k===1&&ov.done?gcol(ov.acc):PC.ink; ctx.font=`700 46px ${FEN}`; ctx.fillText(t[0],x+20,y+62); ctx.fillStyle=PC.muted; ctx.font=`500 21px ${FZH}`; ctx.fillText(t[1],x+20,y+98); });
+  y+=120+66;
+  // modes
+  ctx.fillStyle=PC.oak; ctx.font=`700 28px ${FZH}`; ctx.fillText('各速度跟讀表現', P, y); y+=14;
+  MODES.forEach(m=>{ const s=modeStats(m.key); y+=52;
+    ctx.fillStyle=PC.ink; ctx.font=`600 24px ${FZH}`; ctx.fillText(`${m.name} ${m.rate.toFixed(1)}×`, P, y);
+    const bx=P+260, bw=IW-260-250; rrect(ctx,bx,y-20,bw,22,11,PC.soft2); if(s.done) rrect(ctx,bx,y-20,Math.max(22,bw*s.avg/100),22,11,gcol(s.avg));
+    ctx.textAlign='right'; ctx.fillStyle=s.done?gcol(s.avg):PC.muted; ctx.font=`700 26px ${FEN}`; ctx.fillText(s.done?`${s.avg}%`:'—', P+IW-120, y);
+    ctx.fillStyle=PC.muted; ctx.font=`500 21px ${FZH}`; ctx.fillText(`${s.done}/${ITEMS.length} 段`, P+IW, y); ctx.textAlign='left';
+  });
+  y+=82;
+  // per-item table
+  ctx.fillStyle=PC.oak; ctx.font=`700 28px ${FZH}`; ctx.fillText('逐段跟讀品質（語音辨識正確率）', P, y); y+=20;
+  const cw=[100, ...MODES.map(()=>170), IW-100-170*4], cx=[P]; cw.forEach((w,k)=>cx.push(cx[k]+w));
+  y+=12; rrect(ctx,P,y,IW,58,10,PC.pine);
+  ctx.fillStyle='#fff'; ctx.font=`600 20px ${FZH}`; ctx.fillText('句段', cx[0]+14, y+36);
+  MODES.forEach((m,k)=>{ ctx.textAlign='center'; ctx.fillText(`${m.name} ${m.rate.toFixed(1)}×`, cx[k+1]+cw[k+1]/2, y+36); });
+  ctx.textAlign='center'; ctx.fillText('次數', cx[5]+cw[5]/2, y+36); ctx.textAlign='left';
+  y+=58;
+  SH_IDX.forEach((i,row)=>{
+    const q=itemQuality(i), missTxt=q.miss.length?('唸錯／漏唸：'+q.miss.join(', ')):'';
+    ctx.font=`500 19px ${FEN}`; const ml = missTxt ? wrapLines(ctx, missTxt, IW-120).slice(0,2) : [];
+    const rh = 54 + ml.length*26;
+    if(row%2===0){ ctx.fillStyle='#FAFBF7'; ctx.fillRect(P,y,IW,rh); }
+    ctx.fillStyle=PC.ink; ctx.font=`700 24px ${FEN}`; ctx.fillText(ITEMS[i].label, cx[0]+14, y+36);
+    q.cells.forEach((c,k)=>{ const mx=cx[k+1]+cw[k+1]/2; ctx.textAlign='center';
+      if(!c){ ctx.fillStyle=PC.line; ctx.font=`600 24px ${FEN}`; ctx.fillText('—', mx, y+36); }
+      else { ctx.fillStyle=gcol(c.best); ctx.font=`700 26px ${FEN}`; ctx.fillText(`${c.best}%${!MODES[k].script&&c.hint?'*':''}`, mx, y+36); }
+      ctx.textAlign='left'; });
+    ctx.textAlign='center'; ctx.fillStyle=PC.ink; ctx.font=`600 24px ${FEN}`; ctx.fillText(q.n?String(q.n):'—', cx[5]+cw[5]/2, y+36); ctx.textAlign='left';
+    ctx.fillStyle=PC.bad; ctx.font=`500 19px ${FEN}`; ml.forEach((l,k)=>ctx.fillText(l, cx[0]+14, y+62+k*26));
+    y+=rh; ctx.fillStyle=PC.line; ctx.fillRect(P,y-1,IW,1);
+  });
+  ctx.fillStyle=PC.muted; ctx.font=`500 19px ${FZH}`; y+=34; ctx.fillText('＊＝無稿跟讀時用了提示。紅字為最佳一次仍唸錯或漏唸的字。', P, y);
+  // weak
+  const weak=weakList(); y+=50;
+  ctx.fillStyle=PC.oak; ctx.font=`700 28px ${FZH}`; ctx.fillText('需要加強的句段', P, y); y+=14;
+  if(!weak.length){ y+=38; ctx.fillStyle=PC.muted; ctx.font=`500 22px ${FZH}`; ctx.fillText(ov.done?'沒有低於 80% 的句段，表現很穩定！':'還沒有開始跟讀。', P, y); }
+  weak.forEach(w=>{ y+=40; ctx.fillStyle=gcol(w.avg); ctx.font=`700 24px ${FEN}`; ctx.fillText(`${ITEMS[w.i].label}  ${w.avg}%`, P, y);
+    ctx.fillStyle=PC.ink; ctx.font=`500 22px ${FEN}`; wrapLines(ctx, ITEMS[w.i].en, IW-170).forEach((l,k)=>{ if(k) y+=32; ctx.fillText(l, P+170, y); }); });
+  // phrases
+  y+=60; ctx.fillStyle=PC.oak; ctx.font=`700 28px ${FZH}`; ctx.fillText('本課重點片語', P, y); y+=10;
+  PHR.filter(p=>p.main).forEach(p=>{ const s=idiomStatus(p); y+=44; ctx.fillStyle=PC.ink; ctx.font=`600 24px ${FEN}`; ctx.fillText(p.label, P, y);
+    const col = s.st[0]==='g'?PC.good:s.st[0]==='y'?PC.warn:PC.muted; ctx.textAlign='right'; ctx.fillStyle=col; ctx.font=`700 22px ${FZH}`; ctx.fillText(s.st[1], P+IW, y); ctx.textAlign='left'; });
+  // footer
+  y+=50; ctx.fillStyle=PC.line; ctx.fillRect(P,y,IW,2); y+=40;
+  ctx.fillStyle=PC.muted; ctx.font=`500 19px ${FZH}`; ctx.fillText(`正確率＝語音辨識聽到的字數 ÷ 應唸字數。產生時間：${today()} ${new Date().toTimeString().slice(0,5)}`, P, y);
+  return y+40;
+}
+async function makePng(){
+  try{ await Promise.all([document.fonts.load(`700 40px "Noto Sans TC"`,'報告姓名'), document.fonts.load(`500 22px "Noto Sans TC"`,'報告'), document.fonts.load(`700 26px "Lexend"`,'Ab1'), document.fonts.load(`500 19px "Lexend"`,'Ab1')]); }catch(e){}
+  const W=1080, m=document.createElement('canvas'); m.width=W; m.height=10;
+  const H=Math.ceil(drawReport(m.getContext('2d'), W));
+  const c=document.createElement('canvas'); c.width=W; c.height=H; const ctx=c.getContext('2d');
+  ctx.fillStyle=PC.bg; ctx.fillRect(0,0,W,H); drawReport(ctx, W);
+  return new Promise(res=>c.toBlob(b=>res(b),'image/png'));
+}
+async function downloadPng(){
+  if(!ST.name.trim()){ toast('請先到「④ 跟讀練習」輸入姓名'); return; }
+  const btn=$('#pngRep'); btn.disabled=true; btn.textContent='產生中…';
+  const blob = await makePng();
+  btn.disabled=false; btn.innerHTML='🖼 下載學習報告（PNG 圖片）';
+  if(!blob){ toast('圖片產生失敗，請再試一次'); return; }
+  const d=new Date(), stamp=`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+  const fname = `${UNIT_SHORT.replace(/\s+/g,"")}_${ST.name.trim().replace(/[\\/:*?"<>|\s]+/g,'')}_${stamp}.png`;
+  const url = URL.createObjectURL(blob);
+  $('#pngWrap').innerHTML = `<p class="hint">報告圖片預覽（手機可長按圖片「儲存影像」，再上傳 LINE 班群）</p><img src="${url}" alt="${esc(ST.name)} 的學習報告">`;
+  if(dlNS){
+    try{ await dlNS.save({filename:fname, data:blob}); toast('報告圖片已下載'); }
+    catch(e){ if(e && e.code==='declined') return; toast('無法直接下載，請長按下方圖片儲存'); }
+    return;
+  }
+  if(window.self!==window.top){ toast('請長按（或按右鍵）下方圖片儲存'); return; }
+  try{ const a=document.createElement('a'); a.href=url; a.download=fname; document.body.appendChild(a); a.click(); a.remove(); toast('報告圖片已下載'); }
+  catch(e){ toast('請長按下方圖片儲存'); }
+}
+$('#report').addEventListener('input',e=>{ if(e.target.id==='teacherNote'){ ST.teacher=e.target.value; save(); } });
+$('#report').addEventListener('click',e=>{
+  const id=e.target.id;
+  if(id==='pngRep'){ downloadPng(); }
+  if(id==='copyRep'){ const t=reportText(); navigator.clipboard.writeText(t).then(()=>toast('已複製文字')).catch(()=>{ const ta=document.createElement('textarea'); ta.value=t; ta.style.cssText='position:fixed;left:-9999px'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); toast('已複製');}catch(_){toast('請手動複製');} ta.remove(); }); }
+  if(id==='printRep'){ window.print(); }
+  if(id==='resetBtn'){ $('#resetArea').innerHTML='<span class="confirm"><b>確定清除這個單元的所有紀錄？</b><button class="btn" id="resetYes" style="background:var(--bad);color:#fff">確定清除</button><button class="btn ghost" id="resetNo">取消</button></span>'; }
+  if(id==='resetNo'){ renderReport(); }
+  if(id==='resetYes'){ const n=ST.name; ST=defState(); ST.name=n; ST.first=new Date().toISOString(); save(); toast('紀錄已清除'); renderReport(); }
+});
+
+/* ================= 使用說明 ================= */
+function setHowto(w){
+  const img=$('#howtoImg'); img.src = w==='report' ? 'guide-report.jpg' : 'guide-shadowing.jpg';
+  img.alt = w==='report' ? '學習報告怎麼傳' : '跟讀練習怎麼做';
+  document.querySelectorAll('[data-howto]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.howto===w));
+  $('#howtoBody').scrollTop=0;
+}
+function openHowto(w){ $('#howto').hidden=false; setHowto(w||'shadow'); document.body.style.overflow='hidden'; $('#howtoClose').focus(); }
+function closeHowto(){ $('#howto').hidden=true; document.body.style.overflow=''; }
+$('#helpBtn').addEventListener('click',()=>{ const t=document.querySelector('nav.tabs [aria-selected="true"]'); openHowto(t && t.dataset.tab==='report' ? 'report' : 'shadow'); });
+document.addEventListener('click',e=>{
+  const h=e.target.closest('[data-help]'); if(h){ openHowto(h.dataset.help); return; }
+  const t=e.target.closest('[data-howto]'); if(t){ setHowto(t.dataset.howto); return; }
+  if(e.target.id==='howtoClose' || e.target.id==='howto') closeHowto();
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('#howto').hidden) closeHowto(); });
+
+/* ================= TABS & FONT ================= */
+function switchTab(t){
+  stopSpeech(); playing=false; setPlayBtn(); clearSpeaking(); if(recState) stopRec();
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===t));
+  document.querySelectorAll('.tabpane').forEach(p=>p.hidden = p.id!=='tab-'+t);
+  if(t==='shadow') renderShadow(); if(t==='report') renderReport(); if(t==='listen') panelDefault();
+  scrollTo({top:0});
+}
+document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+let fs = innerWidth<600?18:21; try{ fs = +localStorage.getItem('oak-fs') || fs; }catch(e){}
+function applyFs(){ document.documentElement.style.setProperty('--read-size', fs+'px'); try{localStorage.setItem('oak-fs',fs)}catch(e){} }
+$('#fsUp').onclick=()=>{ fs=Math.min(34,fs+2); applyFs(); }; $('#fsDown').onclick=()=>{ fs=Math.max(15,fs-2); applyFs(); };
+applyFs();
+</script>
+
+</body></html>
