@@ -1027,59 +1027,84 @@ function record(score, marks, heard){
   renderModes(); renderDots(); renderStage();
 }
 function listenModel(then){ speak(curText(), rate, {onend:()=>{ if(then) then(); }}); }
+let srSolo=false; try{ srSolo=localStorage.getItem('oak-sr-solo')==='1'; }catch(e){}
+let noHear=0, micWarm=false;
+async function warmMic(){
+  if(micWarm || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+  micWarm=true;
+  try{ const ms=await navigator.mediaDevices.getUserMedia({audio:true}); ms.getTracks().forEach(t=>t.stop()); }catch(e){ micWarm=false; }
+}
 async function startRec(){
   if(recState || !SR) return;
   lastResult=null; renderStage();
   const heardEl=$('#sHeard'), btn=$('#sRec'); btn.classList.add('on'); btn.textContent='■ 完成';
-  const words=curTok().length, limit=Math.ceil(words*0.65/rate+3);
-  const st = recState = {heard:'', chunks:[], gotErr:null, akey:audioKey()};
-  const tm=$('#sTimer'); tm.hidden=false; const bar=tm.querySelector('i'); bar.style.transition='none'; bar.style.width='0';
-  requestAnimationFrame(()=>{ bar.style.transition=`width ${limit}s linear`; bar.style.width='100%'; });
-  st.timer=setTimeout(()=>stopRec(),limit*1000);
-  heardEl.textContent='請開始唸…';
+  const words=curTok().length, limit=Math.ceil(words*0.65/rate+4);
+  const st = recState = {heard:'', chunks:[], gotErr:null, akey:audioKey(), results:0, started:false, deadline:0};
+  heardEl.textContent='🎙 麥克風準備中，請稍等…';
+  const go=()=>{ if(st.started || recState!==st) return; st.started=true; st.deadline=Date.now()+limit*1000; clearTimeout(st.guard);
+    heardEl.textContent='🎙 請開始唸！';
+    const tm=$('#sTimer'); tm.hidden=false; const bar=tm.querySelector('i'); bar.style.transition='none'; bar.style.width='0';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ bar.style.transition=`width ${limit}s linear`; bar.style.width='100%'; }));
+    st.timer=setTimeout(()=>stopRec(),limit*1000); };
+  st.guard=setTimeout(()=>{ if(!st.started && recState===st){ st.gotErr=st.gotErr||'nostart'; finishRec(); } },7000);
   try{
-    if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder){
+    if(!srSolo && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder){
       st.stream = await navigator.mediaDevices.getUserMedia({audio:true});
       st.mr = new MediaRecorder(st.stream); st.mr.ondataavailable=e=>e.data.size&&st.chunks.push(e.data);
       st.mr.onstop=()=>{ if(st.chunks.length){ myAudio[st.akey]=URL.createObjectURL(new Blob(st.chunks,{type:st.mr.mimeType||'audio/webm'})); } st.stream.getTracks().forEach(t=>t.stop()); };
       st.mr.start();
     }
   }catch(e){ st.gotErr = (e && e.name==='NotFoundError') ? 'nomic' : 'not-allowed'; }
+  if(recState!==st) return;
   if(st.gotErr){ finishRec(); return; }
   try{
-    const rec = st.rec = new SR(); rec.lang='en-US'; rec.interimResults=true; rec.continuous=true;
-    rec.onresult=e=>{ let fin='',int=''; for(let i=0;i<e.results.length;i++){ (e.results[i].isFinal?(fin+=e.results[i][0].transcript+' '):(int+=e.results[i][0].transcript+' ')); } st.heard=(fin+int).trim(); heardEl.textContent='辨識中：'+st.heard; };
-    rec.onerror=e=>{ st.gotErr=e.error; };
-    rec.onend=()=>{ if(recState===st && !st.stopping && !st.gotErr){ try{rec.start()}catch(_){ finishRec(); } } else finishRec(); };
+    const rec = st.rec = new SR(); rec.lang='en-US'; rec.interimResults=true; rec.continuous=true; rec.maxAlternatives=1;
+    rec.onstart=go; rec.onaudiostart=go;
+    rec.onresult=e=>{ st.results++; let fin='',int=''; for(let i=0;i<e.results.length;i++){ (e.results[i].isFinal?(fin+=e.results[i][0].transcript+' '):(int+=e.results[i][0].transcript+' ')); }
+      const now=(fin+int).trim(); if(now) st.heard = st.prev ? (st.prev+' '+now) : now; heardEl.textContent='辨識中：'+st.heard; };
+    rec.onerror=e=>{ if(e.error==='no-speech'||e.error==='aborted'){ st.soft=(st.soft||0)+1; return; } st.gotErr=e.error; };
+    rec.onend=()=>{
+      if(recState===st && !st.stopping && !st.gotErr && (!st.started || Date.now()<st.deadline-500)){
+        st.prev=st.heard; try{ rec.start(); }catch(_){ finishRec(); } }
+      else finishRec(); };
     rec.start();
   }catch(e){ st.gotErr='sr'; finishRec(); }
 }
 function stopRec(){
-  const st=recState; if(!st) return; st.stopping=true; clearTimeout(st.timer);
+  const st=recState; if(!st) return; st.stopping=true; clearTimeout(st.timer); clearTimeout(st.guard);
   try{ st.mr && st.mr.state!=='inactive' && st.mr.stop(); }catch(_){}
   if(st.rec){ try{st.rec.stop()}catch(_){ finishRec(); } setTimeout(()=>{ if(recState===st) finishRec(); },2500); }
   else finishRec();
 }
 function finishRec(){
-  const st=recState; if(!st) return; recState=null; clearTimeout(st.timer);
+  const st=recState; if(!st) return; recState=null; clearTimeout(st.timer); clearTimeout(st.guard);
   try{ st.mr && st.mr.state!=='inactive' && st.mr.stop(); }catch(_){}
   try{ st.rec && st.rec.abort(); }catch(_){}
   const e=st.gotErr;
   if(e==='not-allowed'||e==='service-not-allowed'){ micProblem='denied'; renderStage(); return; }
   if(e==='nomic'||e==='audio-capture'){ micProblem='nomic'; renderStage(); return; }
-  if(!st.heard){ renderStage(); $('#sHeard').textContent = e==='network' ? '語音辨識需要網路連線，請檢查網路後再試。' : '沒有聽到聲音，請靠近麥克風、大聲一點再試一次。'; return; }
-  micProblem='';
+  if(!st.heard){
+    renderStage();
+    let msg = e==='network' ? '語音辨識需要網路連線，請檢查網路後再試。'
+      : e==='nostart' ? '麥克風沒有啟動成功，請再按一次「開始錄音」。如果一直這樣，請先關掉其他正在用麥克風的 App（例如 LINE 通話、錄音程式），再重新整理這一頁。'
+      : '沒有聽到聲音。請等畫面出現「🎙 請開始唸！」再開口，並靠近麥克風、大聲一點。';
+    if(st.stream && !st.results){ noHear++;
+      if(noHear>=2 && !srSolo){ srSolo=true; try{ localStorage.setItem('oak-sr-solo','1'); }catch(_){}
+        msg='這台裝置同時錄音和辨識時收不到聲音，已自動改成「穩定模式」（只做語音辨識，不保留錄音回放）。請再唸一次。'; } }
+    $('#sHeard').textContent = msg; return;
+  }
+  noHear=0; micProblem='';
   const r=scoreIt(st.heard); record(r.score, r.marks, st.heard); $('#sHeard').textContent='系統聽到：'+st.heard;
 }
 function goStep(i){ cur=i; hintLvl=0; fails=0; lastResult=null; peeking=false; clearTimeout(peekT); renderShadow(); }
 
 $('#tab-shadow').addEventListener('click',e=>{
   const id=e.target.id;
-  if(id==='gateGo'){ const v=($('#gateName').value||'').trim(); if(!v){ toast('請先輸入姓名'); $('#gateName').focus(); return; } ST.name=v; save(); renderShadow(); return; }
+  if(id==='gateGo'){ const v=($('#gateName').value||'').trim(); if(!v){ toast('請先輸入姓名'); $('#gateName').focus(); return; } ST.name=v; save(); renderShadow(); warmMic(); return; }
   if(id==='nameEdit'){ ST.name=''; save(); renderShadow(); return; }
   const rb=e.target.closest('[data-round]'); if(rb){ rate=+rb.dataset.round; goStep(0); return; }
   const db=e.target.closest('[data-dot]'); if(db){ goStep(STEPS.findIndex(x=>x.si===+db.dataset.dot)); return; }
-  if(id==='sListen'){ listenModel(()=>{ if(autoRec && SR && micProblem!=='nomic' && document.getElementById('sRec')) startRec(); }); }
+  if(id==='sListen'){ listenModel(()=>{ if(autoRec && SR && micProblem!=='nomic' && document.getElementById('sRec')) setTimeout(()=>{ if(document.getElementById('sRec')) startRec(); },350); }); }
   else if(id==='sRec'){ if(recState) stopRec(); else { stopSpeech(); startRec(); } }
   else if(id==='sMine'){ const a=new Audio(myAudio[audioKey()]); a.play().catch(()=>toast('無法播放錄音')); }
   else if(id==='sHint'){ hintLvl=Math.min(2,hintLvl+1); renderStage(); }
@@ -1589,7 +1614,7 @@ function switchTab(t){
   stopSpeech(); playing=false; setPlayBtn(); clearSpeaking(); if(recState) stopRec();
   document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===t));
   document.querySelectorAll('.tabpane').forEach(p=>p.hidden = p.id!=='tab-'+t);
-  if(t==='shadow') renderShadow(); if(t==='report') renderReport(); if(t==='listen') panelDefault(); if(t==='vocab') renderVq();
+  if(t==='shadow'){ renderShadow(); if(ST.name && SR) warmMic(); } if(t==='report') renderReport(); if(t==='listen') panelDefault(); if(t==='vocab') renderVq();
   scrollTo({top:0});
 }
 document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
