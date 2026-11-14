@@ -1020,7 +1020,7 @@ function record(score, marks, heard){
   if(r.n===0) r.first=score;
   const missed = curTok().filter((t,k)=>!marks[k]).map(t=>t.t);
   if(score>r.best){ r.best=score; r.miss=missed; r.hint=hintLvl; r.heard=heard.slice(0,200); }
-  r.last=score; r.n++;
+  r.last=score; r.n++; vqStamp();
   if(s.t==='K' && score<PASS){ fails++; if(fails>=1 && hintLvl<1) hintLvl=1; }
   save();
   lastResult={score,marks};
@@ -1098,6 +1098,9 @@ $('#tab-shadow').addEventListener('keydown',e=>{ if(e.target.id==='gateName' && 
 $('#tab-shadow').addEventListener('change',e=>{ if(e.target.id==='sAuto') autoRec=e.target.checked; if(e.target.id==='sZh'){ showZhS=e.target.checked; renderStage(); } });
 
 /* ================= REPORT ================= */
+function vqStamp(){ ST.lastAt=Date.now(); if(!ST.startAt) ST.startAt=ST.lastAt; }
+function fmtDT(ts){ if(!ts) return '—'; const d=new Date(ts); return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
+function fmtDur(sec){ sec=Math.round(sec||0); const h=Math.floor(sec/3600), m=Math.floor(sec%3600/60), x=sec%60; return h?`${h} 小時 ${m} 分`:m?`${m} 分 ${x} 秒`:`${x} 秒`; }
 function fmtMin(s){ const m=Math.round(s/60); return m<1?'< 1':String(m); }
 function today(){ const d=new Date(); return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`; }
 function overview(){
@@ -1164,17 +1167,21 @@ function renderReport(){
   <div class="rcard">
     <div class="rhead">
       <div class="field"><label>學生姓名</label><div style="padding:6px 0;font-weight:700;font-size:22px">${ST.name?esc(ST.name):'<span class="empty" style="font-size:15px">尚未輸入（請到「④ 跟讀練習」輸入）</span>'}</div></div>
-      <div class="field"><label>日期</label><div style="padding:6px 0;font-weight:700;font-size:18px">${today()}</div></div>
-      <div class="field" style="flex:1;min-width:200px"><label>單元</label><div style="padding:6px 0;font-family:var(--f-read);font-weight:600">${esc(UNIT_TITLE)}</div></div>
+      <div class="field" style="flex:1;min-width:200px"><label>文章名稱</label><div style="padding:6px 0;font-family:var(--f-read);font-weight:600;font-size:18px">${esc(UNIT_TITLE)}</div></div>
+    </div>
+    <div class="rhead" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">
+      <div class="field"><label>完成日期與時間</label><div style="padding:6px 0;font-weight:700;font-size:18px;font-variant-numeric:tabular-nums">${ST.lastAt?fmtDT(ST.lastAt):'尚未開始練習'}</div></div>
+      <div class="field"><label>總練習時間</label><div style="padding:6px 0;font-weight:700;font-size:18px">${fmtDur(ST.active)}</div></div>
+      <div class="field"><label>開始練習</label><div style="padding:6px 0;font-size:16px;font-variant-numeric:tabular-nums">${fmtDT(ST.startAt||ST.first)}</div></div>
     </div>
   </div>
   <div class="tiles">
     <div class="tile"><b>${ov.rate}%</b><span>跟讀完成率（${ov.done}/${ov.total}）</span></div>
     <div class="tile"><b>${ov.done?ov.acc+'%':'—'}</b><span>整體跟讀正確率</span></div>
     <div class="tile"><b>${ov.att}</b><span>跟讀總次數</span></div>
-    <div class="tile"><b>${fmtMin(ST.active)}</b><span>學習時間（分鐘）</span></div>
+    <div class="tile"><b style="font-size:24px;line-height:1.5">${fmtDur(ST.active)}</b><span>總練習時間</span></div>
   </div>
-  <div class="rcard"><h3>各速度跟讀表現</h3><div class="tbl"><table>
+  <div class="rcard"><h3>有稿跟讀・無稿跟讀紀錄</h3><div class="tbl"><table>
     <thead><tr><th>步驟</th><th>語速</th><th>完成數</th><th>平均正確率</th><th style="width:30%">表現</th></tr></thead><tbody>
     ${MODES.map(m=>{const s=modeStats(m.key); return `<tr><td>${m.step}・${m.name}</td><td>${m.rate.toFixed(1)}×</td><td>${s.done} / ${s.total} ${s.unit}</td><td>${s.done?s.avg+'%':'—'}</td><td><div class="hbar"><i style="width:${s.avg}%;background:var(--${s.done?(grade(s.avg)==='g'?'good':grade(s.avg)==='y'?'warn':'bad'):'line'})"></i></div></td></tr>`}).join('')}
     </tbody></table></div></div>
@@ -1212,8 +1219,8 @@ function renderReport(){
 }
 function reportText(){
   const ov=overview();
-  const lines=[`【橡木美語 閱讀跟讀學習報告】`,`學生：${ST.name||'（未填）'}　日期：${today()}`,`單元：${UNIT_TITLE}`,
-    `跟讀完成率 ${ov.rate}%｜整體正確率 ${ov.done?ov.acc+'%':'—'}｜跟讀 ${ov.att} 次｜學習 ${fmtMin(ST.active)} 分鐘`,``,`▍各速度跟讀`];
+  const lines=[`【橡木美語 閱讀跟讀學習報告】`,`學生：${ST.name||'（未填）'}`,`文章：${UNIT_TITLE}`,`完成時間：${ST.lastAt?fmtDT(ST.lastAt):'尚未開始練習'}｜總練習時間：${fmtDur(ST.active)}｜開始練習：${fmtDT(ST.startAt||ST.first)}`,
+    `跟讀完成率 ${ov.rate}%｜整體正確率 ${ov.done?ov.acc+'%':'—'}｜跟讀 ${ov.att} 次`,``,`▍有稿跟讀・無稿跟讀`];
   MODES.forEach(m=>{const s=modeStats(m.key); lines.push(`・${m.name} ${m.rate.toFixed(1)}×：${s.done}/${s.total} ${s.unit}${s.done?`，平均 ${s.avg}%`:''}`);});
   lines.push('','▍無稿堆疊（每層 80% 過關）'); STK_IDS.forEach(si=>{ const x=stackSum(si); lines.push(`・第 ${si} 句（${STYPE[x.type]}）：`+x.per.map(p=>`${p.rate.toFixed(1)}× ${p.top}/${p.n} 層（${layerTxt(p)}）`).join('；')+(x.peek?`；偷看 ${x.peek} 次`:'')); });
   const weak=weakList(); if(weak.length){ lines.push('','▍需要加強'); weak.forEach(w=>lines.push(`・${ITEMS[w.i].label}（${w.avg}%）${ITEMS[w.i].en}${w.miss.length?`　唸錯／漏唸：${w.miss.join(', ')}`:''}`)); }
@@ -1248,18 +1255,23 @@ function drawReport(ctx, W){
   ctx.textAlign='right'; ctx.font=`600 26px ${FEN}`; ctx.fillText(UNIT_SHORT, W-P, 112); ctx.textAlign='left';
   y=150+30;
   // name card
-  rrect(ctx,P,y,IW,130,18,PC.card,PC.line);
-  ctx.fillStyle=PC.muted; ctx.font=`500 22px ${FZH}`; ctx.fillText('學生姓名', P+28, y+42); ctx.fillText('日期', P+IW-260, y+42);
+  rrect(ctx,P,y,IW,290,18,PC.card,PC.line);
+  ctx.fillStyle=PC.muted; ctx.font=`500 22px ${FZH}`; ctx.fillText('學生姓名', P+28, y+42); ctx.fillText('文章名稱', P+400, y+42);
   ctx.fillStyle=PC.ink; ctx.font=`700 44px ${FZH}`; ctx.fillText(ST.name||'（未填）', P+28, y+100);
-  ctx.font=`700 32px ${FEN}`; ctx.fillText(today(), P+IW-260, y+98);
-  y+=130+24;
+  ctx.font=`600 27px ${FEN}`; wrapLines(ctx, UNIT_TITLE, IW-400-28).slice(0,2).forEach((l,k)=>ctx.fillText(l, P+400, y+88+k*36));
+  ctx.fillStyle=PC.line; ctx.fillRect(P+28,y+150,IW-56,2);
+  ctx.fillStyle=PC.muted; ctx.font=`500 22px ${FZH}`; ctx.fillText('完成日期與時間', P+28, y+194); ctx.fillText('總練習時間', P+400, y+194); ctx.fillText('開始練習', P+680, y+194);
+  ctx.fillStyle=PC.ink; ctx.font=`700 30px ${FEN}`; ctx.fillText(ST.lastAt?fmtDT(ST.lastAt):'—', P+28, y+246);
+  ctx.font=`700 30px ${FZH}`; ctx.fillText(fmtDur(ST.active), P+400, y+246);
+  ctx.fillStyle=PC.muted; ctx.font=`600 23px ${FEN}`; ctx.fillText(fmtDT(ST.startAt||ST.first), P+680, y+244);
+  y+=290+24;
   // tiles
-  const tiles=[[`${ov.rate}%`,`完成率 ${ov.done}/${ov.total}`],[ov.done?`${ov.acc}%`:'—','整體正確率'],[String(ov.att),'跟讀總次數'],[fmtMin(ST.active),'學習分鐘']];
+  const tiles=[[`${ov.rate}%`,`完成率 ${ov.done}/${ov.total}`],[ov.done?`${ov.acc}%`:'—','整體正確率'],[String(ov.att),'跟讀總次數'],[`${vqStats('ez').done+vqStats('ze').done+vqStats('sp').done}`,'單字片語練習題數']];
   const tw=(IW-3*16)/4;
   tiles.forEach((t,k)=>{ const x=P+k*(tw+16); rrect(ctx,x,y,tw,120,16,PC.soft2); ctx.fillStyle=k===1&&ov.done?gcol(ov.acc):PC.ink; ctx.font=`700 46px ${FEN}`; ctx.fillText(t[0],x+20,y+62); ctx.fillStyle=PC.muted; ctx.font=`500 21px ${FZH}`; ctx.fillText(t[1],x+20,y+98); });
   y+=120+66;
   // modes
-  ctx.fillStyle=PC.oak; ctx.font=`700 28px ${FZH}`; ctx.fillText('各速度跟讀表現', P, y); y+=14;
+  ctx.fillStyle=PC.oak; ctx.font=`700 28px ${FZH}`; ctx.fillText('有稿跟讀・無稿跟讀紀錄', P, y); y+=14;
   MODES.forEach(m=>{ const s=modeStats(m.key); y+=52;
     ctx.fillStyle=PC.ink; ctx.font=`600 24px ${FZH}`; ctx.fillText(`${m.name} ${m.rate.toFixed(1)}×`, P, y);
     const bx=P+260, bw=IW-260-250; rrect(ctx,bx,y-20,bw,22,11,PC.soft2); if(s.done) rrect(ctx,bx,y-20,Math.max(22,bw*s.avg/100),22,11,gcol(s.avg));
@@ -1418,7 +1430,7 @@ function vqNext(first){
 function vqRecord(ok){
   const rec = ST.vq[VQ.mode][VQ.cur.id] || {n:0, first:null, ok:0};
   rec.n++; if(rec.first===null) rec.first = ok?1:0; if(ok) rec.ok = 1; rec.last = ok?1:0;
-  ST.vq[VQ.mode][VQ.cur.id] = rec; save();
+  ST.vq[VQ.mode][VQ.cur.id] = rec; vqStamp(); save();
 }
 function vqOptions(){
   const c=VQ.cur, field = VQ.mode==='ez' ? 'zh' : 'en';
