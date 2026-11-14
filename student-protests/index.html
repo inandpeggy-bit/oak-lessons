@@ -326,6 +326,45 @@ footer{color:var(--muted);font-size:12px;padding-block:20px 30px;text-align:cent
   body{background:#fff;color:#000}
   .rcard{break-inside:avoid;border-color:#bbb}
 }
+/* 單字片語練習 */
+.vscope{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 12px}
+.vhead{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.vprompt{margin:18px 0 4px;line-height:1.25;text-wrap:balance}
+.vprompt.en{font-family:var(--f-read);font-size:calc(var(--read-size) * 1.8);font-weight:600}
+.vprompt.vzh{font-size:calc(var(--read-size) * 1.45);font-weight:700}
+.vsub{color:var(--muted);font-family:var(--f-read)}
+.vopts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0 4px}
+@media (max-width:600px){.vopts{grid-template-columns:minmax(0,1fr)}}
+.vopt{display:flex;gap:10px;align-items:center;text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 14px;min-height:56px;font-size:17px;font-weight:600}
+.vopt.en{font-family:var(--f-read)}
+.vopt i{font-style:normal;flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);color:var(--oak);font-size:14px;font-family:var(--f-read)}
+.vopt:hover:not(:disabled){border-color:var(--pine)}
+.vopt:disabled{cursor:default}
+.vopt.ok{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--surface))}
+.vopt.no{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--surface))}
+.vres{justify-content:space-between}
+.vres.g .msg{color:var(--good)} .vres.r .msg{color:var(--bad)}
+.vres b{font-family:var(--f-read);font-size:20px}
+.vzone{display:flex;flex-wrap:wrap;gap:10px;align-items:center;min-height:72px;border-radius:16px;padding:12px;margin:10px 0;touch-action:none}
+.vans{border:2.5px dashed var(--pine);background:color-mix(in srgb,var(--pine) 5%,var(--surface))}
+.vans.done{border-style:solid;border-color:var(--good)}
+.vbank{background:var(--surface-2);border:2px solid transparent}
+.vzone.over{border-color:var(--honey);box-shadow:0 0 0 3px color-mix(in srgb,var(--honey) 30%,transparent)}
+.vph{color:var(--muted);font-size:14px}
+.vtile{touch-action:none;user-select:none;-webkit-user-select:none;border:0;border-radius:12px;padding:10px 16px;min-height:52px;min-width:52px;font-family:var(--f-read);font-weight:600;font-size:calc(var(--read-size) * 1.15);background:var(--honey);color:#2A1E05;box-shadow:0 3px 0 color-mix(in srgb,var(--oak) 55%,transparent);cursor:grab}
+.vans .vtile{background:var(--surface);color:var(--ink);border:2px solid var(--pine);box-shadow:0 3px 0 color-mix(in srgb,var(--pine) 35%,transparent)}
+.vtile.bad{border-color:var(--bad)!important;color:var(--bad)!important}
+.vtile.good{border-color:var(--good)!important;color:var(--good)!important}
+.vtile.lift{opacity:.3}
+.vtile.ghost{position:fixed;z-index:200;pointer-events:none;opacity:.95;cursor:grabbing;transform:scale(1.06);box-shadow:var(--shadow)}
+.vtile:disabled{cursor:default;opacity:.6}
+.vdone{text-align:center;display:grid;gap:10px;justify-items:center}
+.vdone .controls{justify-content:center}
+.vwrong{list-style:none;padding:0;margin:0;display:grid;gap:6px;text-align:left}
+.vwrong b{font-family:var(--f-read);font-size:18px}
+.vwrong span{color:var(--muted)}
+#vqModes{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:600px){#vqModes{grid-template-columns:minmax(0,1fr)}}
 </style>
 
 <header class="top">
@@ -348,6 +387,7 @@ footer{color:var(--muted);font-size:12px;padding-block:20px 30px;text-align:cent
       <button role="tab" data-tab="stack" aria-selected="false">③ 堆疊練習</button>
       <button role="tab" data-tab="shadow" aria-selected="false">④ 跟讀練習</button>
       <button role="tab" data-tab="report" aria-selected="false">⑤ 學習報告</button>
+      <button role="tab" data-tab="vocab" aria-selected="false">⑥ 單字片語練習</button>
     </nav>
   </div></div>
 </header>
@@ -416,6 +456,16 @@ footer{color:var(--muted);font-size:12px;padding-block:20px 30px;text-align:cent
     <div class="modes" id="modes"></div>
     <div class="dots" id="dots"></div>
     <div class="stage" id="stage"></div>
+  </section>
+
+  <!-- VOCAB PRACTICE -->
+  <section class="tabpane" id="tab-vocab" hidden>
+    <h2 class="section-h">單字片語練習<small>本課 20 個重點單字＋10 個片語・看英選中、看中選英、音節方塊拼字</small></h2>
+    <div class="modes" id="vqModes"></div>
+    <div class="vscope"><span class="hint" style="margin:0">練習範圍</span><div class="seg" id="vqScope" role="group" aria-label="練習範圍">
+      <button data-vs="all" aria-pressed="true">全部 30 個</button><button data-vs="w" aria-pressed="false">單字 20</button><button data-vs="p" aria-pressed="false">片語 10</button>
+    </div></div>
+    <div class="stage" id="vqStage"></div>
   </section>
 
   <!-- REPORT -->
@@ -499,8 +549,10 @@ const LADDERS = [
 /* 超過 12 個字的句子拆成兩段跟讀：寫出第一段，剩下的就是第二段 */
 const SPLITS = {"1": "When students in France take to the streets,", "2": "While some demand better school facilities and more teachers,", "3": "One major concern is the rising cost of living,", "4": "If prices continue to rise while wages remain unchanged,", "6": "Parents who struggle to cover basic expenses", "7": "Although a small price increase may seem unimportant,", "8": "By participating in protests, students hope to draw attention to these difficulties", "9": "Workers may join them to demand higher wages,", "12": "When we examine the connection between public concerns and family budgets,"};
 
+const SYLL = {"concern": "con·cern", "extend": "ex·tend", "demand": "de·mand", "facility": "fa·cil·i·ty", "financial": "fi·nan·cial", "pressure": "pres·sure", "expense": "ex·pense", "wage": "w·age", "unchanged": "un·changed", "household": "house·hold", "essential": "es·sen·tial", "struggle": "strug·gle", "cover": "cov·er", "burden": "bur·den", "participate": "par·tic·i·pate", "priority": "pri·or·i·ty", "dramatic": "dra·mat·ic", "influence": "in·flu·ence", "examine": "ex·am·ine", "budget": "bud·get"};
+
 /* ================= STATE ================= */
-const defState = () => ({name:"", active:0, full:0, sentPlays:0, lookups:{}, phraseLooks:{}, scores:{}, stack:{}, peeks:{}, teacher:"", first:null});
+const defState = () => ({name:"", active:0, full:0, sentPlays:0, lookups:{}, phraseLooks:{}, scores:{}, stack:{}, peeks:{}, teacher:"", first:null, vq:{ez:{},ze:{},sp:{}}});
 let ST = defState();
 try{
   const raw = localStorage.getItem(UNIT_KEY);
@@ -1140,6 +1192,12 @@ function renderReport(){
     <thead><tr><th>片語</th><th>查詢過</th><th>有稿最佳</th><th>無稿最佳</th><th>狀態</th></tr></thead><tbody>
     ${PHR.filter(p=>p.main).map(p=>{const s=idiomStatus(p); return `<tr><td style="font-family:var(--f-read);font-weight:600">${esc(p.label)}<div class="hint" style="margin:0;font-weight:400">${esc(p.zh)}</div></td><td>${s.looked?'✓':'—'}</td><td>${s.withS?s.withS+'%':'—'}</td><td>${s.blind?s.blind+'%':'—'}</td><td><span class="pill ${s.st[0]}">${s.st[1]}</span></td></tr>`}).join('')}
     </tbody></table></div><p class="hint" style="margin:8px 0 0">「已掌握」＝含該片語的句段，無稿跟讀達 80% 以上。</p></div>
+  <div class="rcard"><h3>單字片語練習</h3><div class="tbl"><table>
+    <thead><tr><th>練習</th><th>已練</th><th>一次答對</th><th style="width:30%">表現</th></tr></thead><tbody>
+    ${vqReportRows().map(({m,s})=>`<tr><td>${m.name}</td><td>${s.done} / ${s.total}</td><td>${s.done?s.first+' 個（'+s.rate+'%）':'—'}</td><td><div class="hbar"><i style="width:${s.done?s.rate:0}%;background:${s.rate>=85?'var(--good)':s.rate>=65?'var(--warn)':'var(--bad)'}"></i></div></td></tr>`).join('')}
+    </tbody></table></div>
+    ${(()=>{const ms=vqMissList(); return ms.length?`<p class="hint" style="margin:10px 0 4px">需要再練（答錯過或還沒拼對）：</p><div class="vocab">${ms.map(i=>`<div class="vitem"><div><b>${esc(i.en)}</b> <span>${esc(i.zh)}</span></div>${sayBtn(i.en)}</div>`).join('')}</div>`:'';})()}
+  </div>
   <div class="rcard"><h3>我的生字本</h3>
     ${vocab.length?`<div class="vocab">${vocab.map(([w,n])=>`<div class="vitem"><div><b>${esc(w)}</b> <span>${esc(DICT[w]?DICT[w][2]:'')}</span></div><div style="display:flex;align-items:center;gap:4px"><span>×${n}</span>${sayBtn(w)}</div></div>`).join('')}</div>`:'<p class="empty">在「聆聽與閱讀」點單字，查過的字會出現在這裡。</p>'}
   </div>
@@ -1160,6 +1218,8 @@ function reportText(){
   lines.push('','▍無稿堆疊（每層 80% 過關）'); STK_IDS.forEach(si=>{ const x=stackSum(si); lines.push(`・第 ${si} 句（${STYPE[x.type]}）：`+x.per.map(p=>`${p.rate.toFixed(1)}× ${p.top}/${p.n} 層（${layerTxt(p)}）`).join('；')+(x.peek?`；偷看 ${x.peek} 次`:'')); });
   const weak=weakList(); if(weak.length){ lines.push('','▍需要加強'); weak.forEach(w=>lines.push(`・${ITEMS[w.i].label}（${w.avg}%）${ITEMS[w.i].en}${w.miss.length?`　唸錯／漏唸：${w.miss.join(', ')}`:''}`)); }
   lines.push('','▍片語掌握'); PHR.filter(p=>p.main).forEach(p=>{const s=idiomStatus(p); lines.push(`・${p.label}（${p.zh}）：${s.st[1]}`);});
+  lines.push('','▍單字片語練習'); vqReportRows().forEach(({m,s})=>lines.push(`・${m.name}：已練 ${s.done}/${s.total}${s.done?`，一次答對 ${s.first} 個（${s.rate}%）`:''}`));
+  { const ms=vqMissList(); if(ms.length) lines.push('需要再練：'+ms.map(i=>i.en).join('、')); }
   if(ST.teacher.trim()) lines.push('','▍老師評語',ST.teacher.trim());
   return lines.join('\n');
 }
@@ -1256,6 +1316,15 @@ function drawReport(ctx, W){
   y+=60; ctx.fillStyle=PC.oak; ctx.font=`700 28px ${FZH}`; ctx.fillText('本課重點片語', P, y); y+=10;
   PHR.filter(p=>p.main).forEach(p=>{ const s=idiomStatus(p); y+=44; ctx.fillStyle=PC.ink; ctx.font=`600 24px ${FEN}`; ctx.fillText(p.label, P, y);
     const col = s.st[0]==='g'?PC.good:s.st[0]==='y'?PC.warn:PC.muted; ctx.textAlign='right'; ctx.fillStyle=col; ctx.font=`700 22px ${FZH}`; ctx.fillText(s.st[1], P+IW, y); ctx.textAlign='left'; });
+  // vocab practice
+  y+=60; ctx.fillStyle=PC.oak; ctx.font=`700 28px ${FZH}`; ctx.fillText('單字片語練習（一次答對率）', P, y); y+=14;
+  vqReportRows().forEach(({m,s})=>{ y+=52;
+    ctx.fillStyle=PC.ink; ctx.font=`600 24px ${FZH}`; ctx.fillText(m.name, P, y);
+    const bx=P+260, bw=IW-260-250; rrect(ctx,bx,y-20,bw,22,11,PC.soft2); if(s.done) rrect(ctx,bx,y-20,Math.max(22,bw*s.rate/100),22,11,gcol(s.rate));
+    ctx.textAlign='right'; ctx.fillStyle=s.done?gcol(s.rate):PC.muted; ctx.font=`700 26px ${FEN}`; ctx.fillText(s.done?`${s.rate}%`:'—', P+IW-120, y);
+    ctx.fillStyle=PC.muted; ctx.font=`500 21px ${FZH}`; ctx.fillText(`已練 ${s.done}/${s.total}`, P+IW, y); ctx.textAlign='left'; });
+  { const ms=vqMissList(); if(ms.length){ y+=46; ctx.fillStyle=PC.bad; ctx.font=`600 21px ${FZH}`; ctx.fillText('需要再練：', P, y);
+      ctx.font=`500 21px ${FEN}`; wrapLines(ctx, ms.map(i=>i.en).join(', '), IW-120).forEach((l,k)=>{ if(k) y+=30; ctx.fillText(l, P+120, y); }); } }
   // footer
   y+=50; ctx.fillStyle=PC.line; ctx.fillRect(P,y,IW,2); y+=40;
   ctx.fillStyle=PC.muted; ctx.font=`500 19px ${FZH}`; ctx.fillText(`正確率＝語音辨識聽到的字數 ÷ 應唸字數。產生時間：${today()} ${new Date().toTimeString().slice(0,5)}`, P, y);
@@ -1316,15 +1385,203 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !$('#howto').hidden) closeHowto(); });
 
+/* ================= 單字片語練習（看英選中／看中選英／音節拼字） ================= */
+const VQ_MODES = [
+  {key:'ez', name:'看英文選中文', short:'英→中'},
+  {key:'ze', name:'看中文選英文', short:'中→英'},
+  {key:'sp', name:'音節方塊拼字', short:'拼字'},
+];
+const vqZh = s => s.replace(/（[^）]*）/g,'').trim();
+const VQ_ITEMS = [
+  ...KEYWORDS.map(k=>({id:'w:'+k.w, kind:'w', en:k.w, zh:vqZh(DICT[k.w][2]), kk:DICT[k.w][0], pos:DICT[k.w][1],
+      tiles:(SYLL[k.w]||k.w).split('·')})),
+  ...PHR.filter(p=>p.main).map(p=>{ const en=p.label.replace(/…/g,'').trim();
+      return {id:'p:'+p.id, kind:'p', en, zh:p.zh.replace(/……$/,'…'), kk:'', pos:'片語', tiles:en.split(/\s+/)}; }),
+];
+const VQ_BY = Object.fromEntries(VQ_ITEMS.map(i=>[i.id,i]));
+if(!ST.vq) ST.vq = {ez:{}, ze:{}, sp:{}};
+let VQ = {mode:'ez', scope:'all', queue:[], pos:0, right:0, wrong:[], cur:null, answered:false, firstTry:true, bank:[], ans:[], tries:0};
+
+function vqShuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function vqPool(){ return VQ_ITEMS.filter(i=>VQ.scope==='all'||i.kind===VQ.scope); }
+function vqStart(ids){
+  VQ.queue = vqShuffle(ids || vqPool().map(i=>i.id)); VQ.pos=0; VQ.right=0; VQ.wrong=[];
+  vqNext(true);
+}
+function vqNext(first){
+  if(!first) VQ.pos++;
+  VQ.answered=false; VQ.firstTry=true; VQ.tries=0;
+  VQ.cur = VQ.pos<VQ.queue.length ? VQ_BY[VQ.queue[VQ.pos]] : null;
+  if(VQ.cur && VQ.mode==='sp') vqSetupTiles();
+  renderVq();
+}
+function vqRecord(ok){
+  const rec = ST.vq[VQ.mode][VQ.cur.id] || {n:0, first:null, ok:0};
+  rec.n++; if(rec.first===null) rec.first = ok?1:0; if(ok) rec.ok = 1; rec.last = ok?1:0;
+  ST.vq[VQ.mode][VQ.cur.id] = rec; save();
+}
+function vqOptions(){
+  const c=VQ.cur, field = VQ.mode==='ez' ? 'zh' : 'en';
+  const others = vqShuffle(VQ_ITEMS.filter(i=>i.kind===c.kind && i.id!==c.id && i[field]!==c[field])).slice(0,3);
+  return vqShuffle([c, ...others]).map(i=>({id:i.id, text:i[field]}));
+}
+/* ---------- 音節方塊 ---------- */
+function vqSetupTiles(){
+  const c=VQ.cur;
+  const extraN = c.kind==='w' ? (c.tiles.length<=2?2:1) : 1;
+  const used = new Set(c.tiles.map(t=>t.toLowerCase()));
+  const src = vqShuffle(VQ_ITEMS.filter(i=>i.kind===c.kind && i.id!==c.id).flatMap(i=>i.tiles)).filter(t=>{ const l=t.toLowerCase(); if(used.has(l)) return false; used.add(l); return true; });
+  const all = [...c.tiles.map((t,k)=>({t, real:true, k})), ...src.slice(0,extraN).map(t=>({t, real:false}))];
+  let bank = vqShuffle(all.map((x,i)=>({...x, uid:i})));
+  if(bank.filter(x=>x.real).map(x=>x.t).join('')===c.tiles.join('') && c.tiles.length>1) bank = bank.reverse();
+  VQ.bank = bank; VQ.ans = []; VQ.bad = null;
+}
+function vqSpellText(){ return VQ.ans.map(x=>x.t).join(VQ.cur.kind==='p'?' ':''); }
+function vqCheckSpell(){
+  if(!VQ.ans.length){ toast('先把方塊移到上面的答案列'); return; }
+  const c=VQ.cur, ok = VQ.ans.length===c.tiles.length && VQ.ans.every((x,k)=>x.t===c.tiles[k]);
+  VQ.tries++;
+  if(ok){ VQ.answered=true; vqRecord(VQ.firstTry); if(VQ.firstTry) VQ.right++; else if(!VQ.wrong.includes(c.id)) VQ.wrong.push(c.id); speak(c.en, 0.9); }
+  else { if(VQ.firstTry){ VQ.firstTry=false; if(!VQ.wrong.includes(c.id)) VQ.wrong.push(c.id); }
+    VQ.bad = VQ.ans.map((x,k)=>x.t!==c.tiles[k]); }
+  renderVq();
+}
+function vqReveal(){
+  const c=VQ.cur; if(VQ.firstTry){ VQ.firstTry=false; if(!VQ.wrong.includes(c.id)) VQ.wrong.push(c.id); }
+  const real = [...VQ.bank, ...VQ.ans];
+  VQ.ans = c.tiles.map(t=>{ const i=real.findIndex(x=>x.t===t); return real.splice(i,1)[0]; });
+  VQ.bank = real; VQ.bad=null; VQ.answered=true; vqRecord(false); speak(c.en, 0.9); renderVq();
+}
+function vqMove(uid, toAns, index){
+  let tile = VQ.bank.find(x=>x.uid===uid), from=VQ.bank;
+  if(!tile){ tile = VQ.ans.find(x=>x.uid===uid); from=VQ.ans; }
+  if(!tile || VQ.answered) return;
+  from.splice(from.indexOf(tile),1);
+  const to = toAns ? VQ.ans : VQ.bank;
+  if(index==null || index>to.length) index = to.length;
+  to.splice(index,0,tile); VQ.bad=null;
+  renderVq();
+}
+/* 拖曳：手指或滑鼠按住方塊移動；輕點則直接移到另一列 */
+let vqDrag=null;
+function vqPointerDown(e){
+  const b=e.target.closest('.vtile'); if(!b || VQ.answered) return;
+  vqDrag={uid:+b.dataset.uid, x:e.clientX, y:e.clientY, el:b, moved:false, ghost:null};
+  b.setPointerCapture && b.setPointerCapture(e.pointerId);
+}
+function vqPointerMove(e){
+  if(!vqDrag) return;
+  const dx=e.clientX-vqDrag.x, dy=e.clientY-vqDrag.y;
+  if(!vqDrag.moved && Math.hypot(dx,dy)<8) return;
+  if(!vqDrag.moved){ vqDrag.moved=true; const r=vqDrag.el.getBoundingClientRect();
+    const g=vqDrag.el.cloneNode(true); g.classList.add('ghost'); g.style.width=r.width+'px'; document.body.appendChild(g);
+    vqDrag.ghost=g; vqDrag.ox=e.clientX-r.left; vqDrag.oy=e.clientY-r.top; vqDrag.el.classList.add('lift'); }
+  vqDrag.ghost.style.left=(e.clientX-vqDrag.ox)+'px'; vqDrag.ghost.style.top=(e.clientY-vqDrag.oy)+'px';
+  const zone = vqZoneAt(e.clientX,e.clientY);
+  document.querySelectorAll('.vzone').forEach(z=>z.classList.toggle('over', z===zone));
+  e.preventDefault();
+}
+function vqZoneAt(x,y){ return [...document.querySelectorAll('.vzone')].find(z=>{ const r=z.getBoundingClientRect(); return x>=r.left-10&&x<=r.right+10&&y>=r.top-14&&y<=r.bottom+14; }) || null; }
+function vqInsertIndex(zone,x,y){
+  const tiles=[...zone.querySelectorAll('.vtile:not(.lift)')];
+  for(let i=0;i<tiles.length;i++){ const r=tiles[i].getBoundingClientRect();
+    if(y<r.top-4) return i;
+    if(y<=r.bottom+4 && x<r.left+r.width/2) return i; }
+  return tiles.length;
+}
+function vqPointerUp(e){
+  if(!vqDrag) return; const d=vqDrag; vqDrag=null;
+  document.querySelectorAll('.vzone').forEach(z=>z.classList.remove('over'));
+  if(d.ghost) d.ghost.remove();
+  const inAns = VQ.ans.some(x=>x.uid===d.uid);
+  if(!d.moved){ vqMove(d.uid, !inAns); return; }
+  const zone=vqZoneAt(e.clientX,e.clientY);
+  if(!zone){ renderVq(); return; }
+  const toAns = zone.id==='vqAns';
+  let idx = vqInsertIndex(zone,e.clientX,e.clientY);
+  vqMove(d.uid, toAns, idx);
+}
+/* ---------- 畫面 ---------- */
+function vqStats(mode, ids){
+  ids = ids || VQ_ITEMS.map(i=>i.id);
+  const rec=ST.vq[mode]; const done=ids.filter(id=>rec[id]); const first=done.filter(id=>rec[id].first===1);
+  const miss=done.filter(id=>rec[id].last!==1);
+  return {total:ids.length, done:done.length, first:first.length, rate: done.length?Math.round(first.length/done.length*100):0, miss};
+}
+function renderVq(){
+  const el=$('#vqStage'); if(!el) return;
+  document.querySelectorAll('#vqModes [data-vm]').forEach(b=>{ b.setAttribute('aria-pressed', b.dataset.vm===VQ.mode);
+    const s=vqStats(b.dataset.vm); b.querySelector('.mstat').textContent = `已練 ${s.done}/${s.total}・一次答對 ${s.done?s.rate+'%':'—'}`; });
+  document.querySelectorAll('#vqScope [data-vs]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.vs===VQ.scope));
+  const c=VQ.cur, n=VQ.queue.length;
+  if(!c){
+    const wr=VQ.wrong.map(id=>VQ_BY[id]);
+    el.innerHTML = `<div class="vdone">
+      <div class="score">${VQ.right}<small> / ${n}</small></div>
+      <p class="msg">${VQ.right===n?'全部一次答對，太棒了！':'一次答對 '+VQ.right+' 題，下面是要再練的：'}</p>
+      ${wr.length?`<ul class="vwrong">${wr.map(i=>`<li><b>${esc(i.kind==='w'?i.tiles.join('·'):i.en)}</b> ${sayBtn(i.en)} <span>${esc(i.zh)}</span></li>`).join('')}</ul>`:''}
+      <div class="controls">${wr.length?`<button class="btn honey" data-vq="retry">只練錯的 ${wr.length} 題</button>`:''}<button class="btn" data-vq="restart">重新開始</button></div></div>`;
+    return;
+  }
+  const head = `<div class="vhead"><span class="count">第 ${VQ.pos+1} / ${n} 題</span><span class="count">一次答對 ${VQ.right}</span>
+    <span class="segtag">${c.kind==='w'?'單字':'片語'}</span></div><div class="meter"><i style="width:${Math.round(VQ.pos/n*100)}%"></i></div>`;
+  let body='';
+  if(VQ.mode==='ez' || VQ.mode==='ze'){
+    if(!VQ.opts || VQ.optsFor!==c.id+VQ.mode){ VQ.opts=vqOptions(); VQ.optsFor=c.id+VQ.mode; }
+    const prompt = VQ.mode==='ez'
+      ? `<div class="vprompt en">${esc(c.en)} ${sayBtn(c.en,'🔊')}</div><div class="vsub">${c.kk?esc(c.kk)+'　':''}${esc(c.pos)}</div>`
+      : `<div class="vprompt vzh">${esc(c.zh)}</div><div class="vsub">${esc(c.pos)}・選出正確的英文</div>`;
+    body = prompt + `<div class="vopts">${VQ.opts.map((o,k)=>{ let cls=''; if(VQ.answered){ if(o.id===c.id) cls='ok'; else if(o.id===VQ.picked) cls='no'; }
+      return `<button class="vopt ${cls} ${VQ.mode==='ze'?'en':''}" data-vo="${o.id}" ${VQ.answered?'disabled':''}><i>${'ABCD'[k]}</i>${esc(o.text)}</button>`; }).join('')}</div>`;
+    if(VQ.answered) body += `<div class="result vres ${VQ.picked===c.id?'g':'r'}"><span class="msg">${VQ.picked===c.id?'答對了！':'正確答案：'}</span>
+      <span><b>${esc(c.en)}</b> ${sayBtn(c.en)}　${esc(c.zh)}</span><button class="btn" data-vq="next">${VQ.pos+1<n?'下一題 ▸':'看結果 ▸'}</button></div>`;
+  } else {
+    body = `<div class="vprompt vzh">${esc(c.zh)}</div>
+      <div class="vsub">${esc(c.pos)}${c.kk?'　'+esc(c.kk):''}　${sayBtn(c.en,'🔊 聽發音')}</div>
+      <p class="hint" style="margin:6px 0">${c.kind==='w'?'把音節方塊移到答案列，依順序拼出單字（有 '+(VQ.bank.length+VQ.ans.length-c.tiles.length)+' 個多出來的方塊）。':'把單字方塊移到答案列，排出正確的片語（有 1 個多出來的方塊）。'}輕點方塊就會移過去，也可以按住拖曳調整順序。</p>
+      <div class="vzone vans ${VQ.answered?'done':''}" id="vqAns" aria-label="答案列">${VQ.ans.length?VQ.ans.map((x,k)=>`<button class="vtile ${VQ.bad&&VQ.bad[k]?'bad':''} ${VQ.answered?'good':''}" data-uid="${x.uid}">${esc(x.t)}</button>`).join(''):'<span class="vph">把方塊放到這裡</span>'}</div>
+      <div class="vzone vbank" id="vqBank" aria-label="方塊區">${VQ.bank.map(x=>`<button class="vtile" data-uid="${x.uid}" ${VQ.answered?'disabled':''}>${esc(x.t)}</button>`).join('')}</div>`;
+    if(!VQ.answered) body += `<div class="controls"><button class="btn" data-vq="check">✔ 檢查</button><button class="btn ghost" data-vq="clear">↺ 全部移回</button>${VQ.tries?'<button class="btn ghost" data-vq="reveal">看答案</button>':''}
+      ${VQ.bad?'<span class="msg" style="color:var(--bad)">紅色方塊位置不對，再試一次</span>':''}</div>`;
+    else body += `<div class="result vres ${VQ.firstTry?'g':'r'}"><span class="msg">${VQ.firstTry?'拼對了！':'正確答案：'}</span>
+      <span><b>${esc(c.kind==='w'?c.tiles.join('·'):c.en)}</b> ${sayBtn(c.en)}</span><button class="btn" data-vq="next">${VQ.pos+1<n?'下一題 ▸':'看結果 ▸'}</button></div>`;
+  }
+  el.innerHTML = head + body;
+}
+function vqInit(){
+  $('#vqModes').innerHTML = VQ_MODES.map((m,k)=>`<button class="mode" data-vm="${m.key}" aria-pressed="false"><span class="mstep">練習 ${k+1}</span><span class="mname">${m.name}</span><span class="mstat"></span></button>`).join('');
+  $('#tab-vocab').addEventListener('click',e=>{
+    const m=e.target.closest('[data-vm]'); if(m){ VQ.mode=m.dataset.vm; VQ.opts=null; vqStart(); return; }
+    const s=e.target.closest('[data-vs]'); if(s){ VQ.scope=s.dataset.vs; vqStart(); return; }
+    const o=e.target.closest('[data-vo]'); if(o && !VQ.answered){ VQ.picked=o.dataset.vo; VQ.answered=true; const ok=VQ.picked===VQ.cur.id;
+      vqRecord(ok); if(ok) VQ.right++; else VQ.wrong.push(VQ.cur.id); speak(VQ.cur.en, 0.9); renderVq(); return; }
+    const a=e.target.closest('[data-vq]'); if(!a) return;
+    const act=a.dataset.vq;
+    if(act==='next') vqNext(); if(act==='restart') vqStart(); if(act==='retry') vqStart(VQ.wrong.slice());
+    if(act==='check') vqCheckSpell(); if(act==='reveal') vqReveal();
+    if(act==='clear'){ VQ.bank=[...VQ.bank, ...VQ.ans]; VQ.ans=[]; VQ.bad=null; renderVq(); }
+  });
+  const st=$('#vqStage');
+  st.addEventListener('pointerdown',vqPointerDown);
+  addEventListener('pointermove',vqPointerMove,{passive:false});
+  addEventListener('pointerup',vqPointerUp); addEventListener('pointercancel',e=>{ if(vqDrag){ if(vqDrag.ghost) vqDrag.ghost.remove(); vqDrag=null; renderVq(); } });
+  st.addEventListener('click',e=>{ if(e.target.closest('.vtile')) e.stopPropagation(); }, true);
+  vqStart();
+}
+/* 報告用 */
+function vqReportRows(){ return VQ_MODES.map(m=>({m, s:vqStats(m.key)})); }
+function vqMissList(){ const set=new Set(); VQ_MODES.forEach(m=>vqStats(m.key).miss.forEach(id=>set.add(id))); return [...set].map(id=>VQ_BY[id]); }
+
 /* ================= TABS & FONT ================= */
 function switchTab(t){
   stopSpeech(); playing=false; setPlayBtn(); clearSpeaking(); if(recState) stopRec();
   document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===t));
   document.querySelectorAll('.tabpane').forEach(p=>p.hidden = p.id!=='tab-'+t);
-  if(t==='shadow') renderShadow(); if(t==='report') renderReport(); if(t==='listen') panelDefault();
+  if(t==='shadow') renderShadow(); if(t==='report') renderReport(); if(t==='listen') panelDefault(); if(t==='vocab') renderVq();
   scrollTo({top:0});
 }
 document.querySelectorAll('nav.tabs button').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+vqInit();
 let fs = innerWidth<600?18:21; try{ fs = +localStorage.getItem('oak-fs') || fs; }catch(e){}
 function applyFs(){ document.documentElement.style.setProperty('--read-size', fs+'px'); try{localStorage.setItem('oak-fs',fs)}catch(e){} }
 $('#fsUp').onclick=()=>{ fs=Math.min(34,fs+2); applyFs(); }; $('#fsDown').onclick=()=>{ fs=Math.max(15,fs-2); applyFs(); };
