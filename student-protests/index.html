@@ -1440,7 +1440,7 @@ function vqOptions(){
 /* ---------- 音節方塊 ---------- */
 function vqSetupTiles(){
   const c=VQ.cur;
-  const extraN = c.kind==='w' ? (c.tiles.length<=2?2:1) : 1;
+  const extraN = 0; // 只放答案的方塊，不放干擾方塊
   const used = new Set(c.tiles.map(t=>t.toLowerCase()));
   const src = vqShuffle(VQ_ITEMS.filter(i=>i.kind===c.kind && i.id!==c.id).flatMap(i=>i.tiles)).filter(t=>{ const l=t.toLowerCase(); if(used.has(l)) return false; used.add(l); return true; });
   const all = [...c.tiles.map((t,k)=>({t, real:true, k})), ...src.slice(0,extraN).map(t=>({t, real:false}))];
@@ -1550,7 +1550,7 @@ function renderVq(){
   } else {
     body = `<div class="vprompt vzh">${esc(c.zh)}</div>
       <div class="vsub">${esc(c.pos)}${c.kk?'　'+esc(c.kk):''}　${sayBtn(c.en,'🔊 聽發音')}</div>
-      <p class="hint" style="margin:6px 0">${c.kind==='w'?'把音節方塊移到答案列，依順序拼出單字（有 '+(VQ.bank.length+VQ.ans.length-c.tiles.length)+' 個多出來的方塊）。':'把單字方塊移到答案列，排出正確的片語（有 1 個多出來的方塊）。'}輕點方塊就會移過去，也可以按住拖曳調整順序。</p>
+      <p class="hint" style="margin:6px 0">${c.kind==='w'?'把音節方塊依順序移到答案列，拼出單字。':'把單字方塊依順序移到答案列，排出片語。'}輕點方塊就會移過去，也可以按住拖曳調整順序。</p>
       <div class="vzone vans ${VQ.answered?'done':''}" id="vqAns" aria-label="答案列">${VQ.ans.length?VQ.ans.map((x,k)=>`<button class="vtile ${VQ.bad&&VQ.bad[k]?'bad':''} ${VQ.answered?'good':''}" data-uid="${x.uid}">${esc(x.t)}</button>`).join(''):'<span class="vph">把方塊放到這裡</span>'}</div>
       <div class="vzone vbank" id="vqBank" aria-label="方塊區">${VQ.bank.map(x=>`<button class="vtile" data-uid="${x.uid}" ${VQ.answered?'disabled':''}>${esc(x.t)}</button>`).join('')}</div>`;
     if(!VQ.answered) body += `<div class="controls"><button class="btn" data-vq="check">✔ 檢查</button><button class="btn ghost" data-vq="clear">↺ 全部移回</button>${VQ.tries?'<button class="btn ghost" data-vq="reveal">看答案</button>':''}
